@@ -1,0 +1,12 @@
+{
+    "name": "Village Stakeholder - Frontend",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "frontend",
+    "workspaceFolder": "/workspace",
+    "extensions": [
+      "octref.vetur",
+      "ms-vscode.vscode-typescript-next"
+    ],
+    "remoteUser": "root"
+  }
+  

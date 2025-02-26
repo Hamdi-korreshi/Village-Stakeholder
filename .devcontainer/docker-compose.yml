@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: .devcontainer/backend.Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ..:/workspace
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: .devcontainer/frontend.Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ..:/workspace
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"

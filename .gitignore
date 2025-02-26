@@ -1,0 +1,8 @@
+.env
+.devcontainer/.enc
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+node_modules/
+env/
