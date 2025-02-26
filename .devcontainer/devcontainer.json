@@ -4,8 +4,11 @@
     "service": "frontend",
     "workspaceFolder": "/workspace",
     "extensions": [
+      "ms-python.python",
+      "ms-azuretools.vscode-docker",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-typescript-next",
       "octref.vetur",
-      "ms-vscode.vscode-typescript-next"
     ],
     "remoteUser": "root"
   }

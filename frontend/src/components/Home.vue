@@ -1,7 +1,11 @@
 <template>
-  <div>
-    <h1>Welcome to My Vue + Django App</h1>
-    <p>{{ message }}</p>
+  <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+    <h1 class="text-4xl font-bold text-blue-600 mb-4">
+      Welcome to My Vue + Django App
+    </h1>
+    <p class="text-lg text-gray-700">
+      {{ message }}
+    </p>
   </div>
 </template>
 
