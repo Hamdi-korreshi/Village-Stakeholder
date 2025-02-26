@@ -1,5 +1,5 @@
 # Village-Stackeholder
-Made for CS491 for B The Cause for their village stakeholder project. The techstack is Vue.js, Django, and 
+Made for CS491 for B The Cause for their village stakeholder project. The techstack is Vue.js + TailwindCSS, Django, and PostgreSQL. 
 
 # How to run with Docker
 Install docker and the devcontainer extension in VSCode. Everything should update correctly and having it running.
