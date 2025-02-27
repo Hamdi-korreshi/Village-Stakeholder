@@ -1,4 +1,4 @@
-# Village-Stackeholder
+# Village-Stakeholder
 Made for CS491 for B The Cause for their village stakeholder project. The techstack is Vue.js + TailwindCSS, Django, and PostgreSQL. 
 
 # How to run with Docker
