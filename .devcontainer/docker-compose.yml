@@ -25,6 +25,7 @@ services:
       - "5173:5173"
     volumes:
       - ..:/workspace
+      - ..:/workspace/frontend/src/app/node_modules
     depends_on:
       - backend
 
