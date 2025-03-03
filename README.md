@@ -6,7 +6,7 @@ Install docker and the devcontainer extension in VSCode. Everything should updat
 So small important details, everything for frontend is running in: [Vue](http://localhost:5173). Django [Django](http://localhost:8000). Add the /admin to see the current backend as a admin. Finally, if you get some weird error about something in the Database not existing make sure to migrate it first. I highly recommend this way of development since it makes everything much easier since you don't have to install PostgreSQL, NPM or Python manually. Contact me if you never used Docker.
 
 # Linux/Mac users
-Chmod start.sh with ``` chmod +x start.sh ``` so it can be executed. Then ``` ./start.sh ```. Note this will tell you if you have not installed Python, NPM or PostgreSQL on your system. You have to install and 
+I have no idea if this will work with Mac users but it should work very well with Linux.
 
 # Windows
-Open a PowerShell terminal and run ``` start.ps1 ```. Note this will tell you if you have not installed Python, NPM or PostgreSQL on your system.
+Use WSL2 Ubuntu with a docker install, make sure you have the Docker WSL2 setting turned on. Then install the devcontainers and run the with rebuild and reopen. 
