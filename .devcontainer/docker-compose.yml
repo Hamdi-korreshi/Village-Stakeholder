@@ -3,7 +3,6 @@ version: '3.8'
 services:
   backend:
     build:
-      container_name: backend
       context: ..
       dockerfile: .devcontainer/backend.Dockerfile
     ports:
@@ -17,6 +16,11 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U Getter"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build:
