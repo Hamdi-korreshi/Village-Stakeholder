@@ -3,6 +3,7 @@ version: '3.8'
 services:
   backend:
     build:
+      container_name: backend
       context: ..
       dockerfile: .devcontainer/backend.Dockerfile
     ports:
@@ -25,7 +26,7 @@ services:
       - "5173:5173"
     volumes:
       - ..:/workspace
-      - ..:/workspace/frontend/src/app/node_modules
+      - /workspace/frontend/node_modules
     depends_on:
       - backend
 

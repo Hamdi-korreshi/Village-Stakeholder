@@ -2,7 +2,7 @@ FROM node:18
 
 WORKDIR /workspace/frontend
 
-COPY frontend/package.json frontend/package-lock.json ./
+COPY frontend/package*.json ./
 
 RUN npm install --include=dev
 

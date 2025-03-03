@@ -1,5 +1,5 @@
 {
-    "name": "Village Stakeholder - Frontend",
+    "name": "Village Stakeholder - Testing",
     "dockerComposeFile": "docker-compose.yml",
     "service": "frontend",
     "workspaceFolder": "/workspace",
