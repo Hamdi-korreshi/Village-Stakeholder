@@ -23,7 +23,8 @@ Post /village/vl/register HTTP1.1
     "email": "bruh@bruh.com",
     "username": "thebruhest",
     "password": "123456789"
-}```
+}
+```
 
 ```201 (Success) Response
 {
