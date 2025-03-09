@@ -46,7 +46,7 @@ Errors:
 ```json
 401 (Unauthorized)
 {
-    "error": "Session cookie invalid
+    "error": "Session cookie invalid"
 }
 ```
 
