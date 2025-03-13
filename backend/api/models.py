@@ -3,11 +3,11 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
-class user(AbstractUser):
+class User(AbstractUser):
     profile_settings = models.JSONField(default=dict, null= True, Blank=True)
     profile_picture = models.URLField(max_length=255, null=True, Blank=True)
 
-class calendar_event(models.Model):
+class Calendar_event(models.Model):
     event_id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="events")
     event_name = models.CharField(max_length=255, null=False)
@@ -25,7 +25,7 @@ class session(models.Model):
 class notification(models.Model):
     notification_id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
-    event = models.ForeignKey(CalendarEvent, on_delete=models.CASCADE, null=True, blank=True, related_name="event_notifications")
+    event = models.ForeignKey(Calendar_event, on_delete=models.CASCADE, null=True, blank=True, related_name="event_notifications")
     message = models.TextField(null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -48,7 +48,7 @@ class message(models.Model):
 
 class calendar_invite(models.Model):
     invite_id = models.BigAutoField(primary_key=True)
-    event = models.ForeignKey(CalendarEvent, on_delete=models.CASCADE, related_name="invites")
+    event = models.ForeignKey(Calendar_event, on_delete=models.CASCADE, related_name="invites")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="event_invites")
     status = models.CharField(max_length=20, choices=[
         ("pending", "Pending"),

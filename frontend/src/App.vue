@@ -1,14 +1,28 @@
 <template>
-  <Home />
+  <div id="app">
+    <LoginPage v-if="!isAuthenticated" @login-success="handleLoginSuccess" />
+    <Dashboard v-else @logout="handleLogout" />
+  </div>
 </template>
 
 <script>
-import Home from './components/Home.vue'
+import LoginPage from "./components/LoginPage.vue";
+import Dashboard from "./components/Dashboard.vue";
 
 export default {
   name: 'App',
-  components: {
-    Home
-  }
-}
+  data() {
+     return {
+      isAuthenticated: false,
+    };
+  },
+  methods: {
+    handleLoginSuccess() {
+      this.isAuthenticated = true;
+    },
+    handleLogout() {
+      this.isAuthenticated = false;
+    },
+  },
+};
 </script>

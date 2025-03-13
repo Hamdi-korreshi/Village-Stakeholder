@@ -16,8 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from .registration_views import register_user
+from .auth_views import get_csrf_token, signin, signout
+from .views import random_string
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('api/hello/', hello_world),
+    path('village/v1/csrf/', get_csrf_token, name='get_csrf_token'),
+    path('village/v1/login', signin, name='signin'),
+    path('village/v1/logout', signout, name='signout'),
+    path('village/v1/random-string/', random_string, name='random_string')
 ]
