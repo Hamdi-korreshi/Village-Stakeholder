@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-zs(ocl3(d^05a*(#wb&3lgp#1k1w#v%6()-yorv*ez_nhfk6n2
 DEBUG = True
 
 ALLOWED_HOSTS = [
-     "localhost",
+    "localhost",
     "127.0.0.1",
     "backend",
 ]
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-
+    'api'
 ]
 
 MIDDLEWARE = [
@@ -129,7 +129,7 @@ USE_I18N = True
 USE_TZ = True
 
 # gamel needs to add this
-AUTH_USER_MODEL = 'accounts.User'
+# AUTH_USER_MODEL = 'accounts.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

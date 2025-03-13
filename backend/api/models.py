@@ -4,8 +4,8 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class User(AbstractUser):
-    profile_settings = models.JSONField(default=dict, null= True, Blank=True)
-    profile_picture = models.URLField(max_length=255, null=True, Blank=True)
+    profile_settings = models.JSONField(default=dict, null= True, blank=True)
+    profile_picture = models.URLField(max_length=255, null=True, blank=True)
 
 class Calendar_event(models.Model):
     event_id = models.BigAutoField(primary_key=True)

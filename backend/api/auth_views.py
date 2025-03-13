@@ -4,8 +4,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from .models import TestData
 
-@ensure_crsf_cookie
-def get_crsf_token(request):
+@ensure_csrf_cookie
+def get_csrf_token(request):
     return JsonResponse({'detail': "CRSF COOKIE SET"})
 
 def signin(request):
@@ -35,7 +35,7 @@ def signin(request):
         return JsonResponse({"error": "Invalid credentials"}, status=401)
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-def singout(request):
+def signout(request):
     if request.method == "POST":
         logout(request)
         return JsonResponse({"message": "Logged out successfully"})
