@@ -11,6 +11,10 @@ import Dashboard from "./components/Dashboard.vue";
 
 export default {
   name: 'App',
+  components: {
+    LoginPage,
+    Dashboard,
+  },
   data() {
      return {
       isAuthenticated: false,
