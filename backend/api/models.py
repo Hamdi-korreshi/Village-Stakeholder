@@ -1,15 +1,17 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 
 # Create your models here.
 
 class user(AbstractUser):
-    profile_settings = models.JSONField(default=dict, null= True, Blank=True)
-    profile_picture = models.URLField(max_length=255, null=True, Blank=True)
+    profile_settings = models.JSONField(default=dict, null=True, blank=True)
+    profile_picture = models.URLField(max_length=255, null=True, blank=True)
+    groups = models.ManyToManyField(Group, related_name="api_users_groups", blank=True)
+    user_permissions = models.ManyToManyField(Permission, related_name="api_users_permissions", blank=True)
 
 class calendar_event(models.Model):
     event_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="events")
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="events")
     event_name = models.CharField(max_length=255, null=False)
     start_time = models.DateTimeField(null=False)
     end_time = models.DateTimeField(null=False)
@@ -18,21 +20,21 @@ class calendar_event(models.Model):
 
 class session(models.Model):
     session_id = models.BigAutoField(primary_key=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="session")
+    user = models.OneToOneField("user", on_delete=models.CASCADE, related_name="user_session")
     expiry = models.DateTimeField(null=False)
     tokens = models.TextField(null=False)
 
 class notification(models.Model):
     notification_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
-    event = models.ForeignKey(CalendarEvent, on_delete=models.CASCADE, null=True, blank=True, related_name="event_notifications")
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_notifications")
+    event = models.ForeignKey(calendar_event, on_delete=models.CASCADE, null=True, blank=True, related_name="event_notifications")
     message = models.TextField(null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
 class villager(models.Model):
     connection_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friends")
-    friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_of")
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_villagers")
+    friend = models.ForeignKey("user", on_delete=models.CASCADE, related_name="friend_villagers")
     status = models.CharField(max_length=20, choices=[
         ("pending", "Pending"),
         ("accepted", "Accepted"),
@@ -41,15 +43,15 @@ class villager(models.Model):
 
 class message(models.Model):
     message_id = models.BigAutoField(primary_key=True)
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_messages")
+    sender = models.ForeignKey("user", on_delete=models.CASCADE, related_name="messages_sent")
+    receiver = models.ForeignKey("user", on_delete=models.CASCADE, related_name="messages_received")
     message = models.TextField(null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
 class calendar_invite(models.Model):
     invite_id = models.BigAutoField(primary_key=True)
-    event = models.ForeignKey(CalendarEvent, on_delete=models.CASCADE, related_name="invites")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="event_invites")
+    event = models.ForeignKey(calendar_event, on_delete=models.CASCADE, related_name="invites")
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_event_invites")
     status = models.CharField(max_length=20, choices=[
         ("pending", "Pending"),
         ("accepted", "Accepted"),
@@ -67,15 +69,13 @@ class user_support_relation(models.Model):
         ("religion_advisor", "Religion Advisor"),
         ("close_friend", "Close Friend"),
         ("mentor", "Mentor"),
-
     ]
 
     relation_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="supporters")  
-    supporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="supporting")  
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supporters")  
+    supporter = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supported")  
     support_role = models.CharField(max_length=50, choices=support_role_choices, null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
-
 
 class TestData(models.Model):
     name = models.CharField(max_length=100)
