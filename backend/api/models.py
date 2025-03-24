@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
-# Create your models here.
-
 class user(AbstractUser):
     profile_settings = models.JSONField(default=dict, null=True, blank=True)
     profile_picture = models.URLField(max_length=255, null=True, blank=True)
@@ -16,6 +14,7 @@ class calendar_event(models.Model):
     start_time = models.DateTimeField(null=False)
     end_time = models.DateTimeField(null=False)
     description = models.TextField(null=True, blank=True)
+    reminder = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class session(models.Model):
@@ -34,12 +33,21 @@ class notification(models.Model):
 class villager(models.Model):
     connection_id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_villagers")
-    friend = models.ForeignKey("user", on_delete=models.CASCADE, related_name="friend_villagers")
+    associate = models.ForeignKey("user", on_delete=models.CASCADE, related_name="associate_villagers")
     status = models.CharField(max_length=20, choices=[
         ("pending", "Pending"),
         ("accepted", "Accepted"),
         ("blocked", "Blocked")
     ], null=False)
+    relation = models.ForeignKey('user_support_relation', on_delete=models.CASCADE, related_name='villager_relation')
+
+class Village(models.Model):
+    owner = models.OneToOneField('user', on_delete=models.CASCADE, related_name='owned_village')
+    description = models.TextField(null=True, blank=True)
+    residents = models.ManyToManyField('user', related_name='village_members')
+
+    def __str__(self):
+        return f"Village owned by {self.owner.username}"
 
 class message(models.Model):
     message_id = models.BigAutoField(primary_key=True)
@@ -71,9 +79,8 @@ class user_support_relation(models.Model):
         ("mentor", "Mentor"),
     ]
 
-    relation_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supporters")  
-    supporter = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supported")  
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supporters")
+    supporter = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supported")
     support_role = models.CharField(max_length=50, choices=support_role_choices, null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
