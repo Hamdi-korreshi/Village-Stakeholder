@@ -1,4 +1,5 @@
 export interface ScheduleItem {
+  date: number;
   time: string;
   description: string;
 }
