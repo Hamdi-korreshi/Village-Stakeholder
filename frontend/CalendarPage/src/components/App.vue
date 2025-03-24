@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-import CalendarScheduling from "./components/CalendarScheduling.vue";
+import CalendarScheduling from "./CalendarScheduling.vue";
 </script>
