@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CalendarCell from "./CalendarCell.vue";
-import type { DayCell } from "./types";
+import type { DayCell } from "../types";
 
 const weekDays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 

@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { DayCell } from "./types";
+import type { DayCell } from "../types";
 
 const props = defineProps<{
   day: DayCell;
