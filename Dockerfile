@@ -4,7 +4,9 @@ WORKDIR /workspace/frontend
 
 COPY ./frontend/package*.json ./
 
-RUN npm install --include=dev
+RUN npm install
+
+COPY ./frontend/ .
 
 EXPOSE 5173
 
