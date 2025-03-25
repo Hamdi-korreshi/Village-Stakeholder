@@ -22,7 +22,7 @@ export default {
     methods: {
         async fetchRandonmString() {
             try {
-                const response = await apiClient.get(`/village/v1/random-string`);
+                const response = await apiClient.get(`/village/v1/random-string/`);
                 this.testData = response.data;
             } catch (error) {
                 console.error("Error fetching random string", error);

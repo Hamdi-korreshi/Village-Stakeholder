@@ -1,6 +1,6 @@
 FROM python:3.10
 
-WORKDIR /app
+WORKDIR /workspace/backend
 
 # Copy requirements and install them
 COPY backend/requirements.txt .

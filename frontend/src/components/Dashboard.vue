@@ -12,7 +12,18 @@
 
 export default {
     name: "Dashbaord",
-    components: { RandomStringDisplay }
-    
+    components: {RandomStringDisplay},
+    methods: {
+        async signoutUser() {
+            try {
+                const result = await signout();
+                console.log(result.message)
+                this.$router.push({'name':"Login"})
+            }
+            catch (error) {
+                console.error("Sign out error", error);
+            }
+        }
+    }
 };
 </script>

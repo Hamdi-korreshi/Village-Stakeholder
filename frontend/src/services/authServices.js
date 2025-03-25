@@ -3,7 +3,7 @@ import apiClient from "../utils/axios.js";
 // change later on for production to real URL
 
 export const register = async (email, username, password) => {
-    const response = await apiClient.post("/village/v1/register", {
+    const response = await apiClient.post("/village/v1/register/", {
         email,
         username,
         password
@@ -14,7 +14,7 @@ export const register = async (email, username, password) => {
 }
 
 export const signin = async (identifier, password) =>  {
-    const response = await apiClient.post("/village/v1/login",
+    const response = await apiClient.post("/village/v1/login/",
         {
             identifier,
             password
@@ -26,7 +26,7 @@ export const signin = async (identifier, password) =>  {
 }
 
 export const signout = async () => {
-    const response = await apiClient.post("/village/v1/logout");
+    const response = await apiClient.post("/village/v1/logout/");
     return response.data;
 }
 
