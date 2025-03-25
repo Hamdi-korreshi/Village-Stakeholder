@@ -2,6 +2,10 @@
   <div class="login-page">
     <h2>Login</h2>
     <LoginForm @login-success="onLoginSuccess" />
+    <p>
+      Don't have an account?
+      <router-link to="/register">Register here</router-link>
+    </p>
   </div>
 </template>
 
@@ -13,7 +17,7 @@ export default {
   components: { LoginForm },
   methods: {
     onLoginSuccess() {
-      this.$emit("login-success");
+      this.$router.push({ name: "Dashboard"})
     },
   },
 };

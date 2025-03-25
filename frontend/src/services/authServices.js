@@ -1,39 +1,32 @@
-import axios from "axios";
-import { getCookie } from "../utils/cookies";
+import apiClient from "../utils/axios.js";
 
 // change later on for production to real URL
-const API_URL = import.meta.env.VITE_API_URL;
 
-export async function register(email, username, password) {
-    const response = await axios.post(`${API_URL}/village/v1/register`, {
+export const register = async (email, username, password) => {
+    const response = await apiClient.post("/village/v1/register", {
         email,
         username,
         password
+    }, {
+        timeout: 5000
     });
     return response.data;
 }
 
-export async function signin(identifier, password) {
-    const csrfToken = getCookie("csrftoken");
-    const response = await axios.post(
-        `${API_URL}/village/v1/login`,
-        {identifier, password},
+export const signin = async (identifier, password) =>  {
+    const response = await apiClient.post("/village/v1/login",
         {
-            headers: { "X-CSRFToken": csrfToken },
+            identifier,
+            password
+        }, {
+            timeout: 5000
         }
     );
     return response.data;
 }
 
-export async function signout() {
-    const csrfToken = getCookie("csrftoken");
-    const response = await axios.post(
-        `${API_URL}/village/v1/logout`,
-        {},
-        {
-            headers: { "X-CSRFToken": csrfToken },
-        }
-    );
+export const signout = async () => {
+    const response = await apiClient.post("/village/v1/logout");
     return response.data;
 }
 

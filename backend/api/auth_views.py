@@ -1,14 +1,15 @@
 import json, random
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from .models import TestData
 
 @ensure_csrf_cookie
 def get_csrf_token(request):
     return JsonResponse({'detail': "CRSF COOKIE SET"})
-
+@csrf_exempt
 def signin(request):
+    print("Sign in hit", request.method)
     if request.method == "POST":
         data = json.loads(request.body)
         identifier = data.get('identifier')

@@ -16,15 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from ap.registration_view import register_user
+from api.registration_view import register_user
 from api.auth_views import get_csrf_token, signin, signout
 from api.views import random_string
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('village/v1/register', register_user, name='register')
+    path('village/v1/register/', register_user, name='register_user'),
     path('village/v1/csrf/', get_csrf_token, name='get_csrf_token'),
-    path('village/v1/login', signin, name='signin'),
-    path('village/v1/logout', signout, name='signout'),
+    path('village/v1/login/', signin, name='signin'),
+    path('village/v1/logout/', signout, name='signout'),
     path('village/v1/random-string/', random_string, name='random_string')
 ]

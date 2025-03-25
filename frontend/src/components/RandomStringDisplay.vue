@@ -10,8 +10,7 @@
 </template>
 
 <script>
-import axios from "axios";
-const API_URL = import.meta.env.VITE_API_URL;
+import apiClient from "../utils/axios.js";
 
 export default {
     name: "RandomStringDisplay",
@@ -23,7 +22,7 @@ export default {
     methods: {
         async fetchRandonmString() {
             try {
-                const response = await axios.get(`${API_URL}/village/v1/random-string`);
+                const response = await apiClient.get(`/village/v1/random-string`);
                 this.testData = response.data;
             } catch (error) {
                 console.error("Error fetching random string", error);

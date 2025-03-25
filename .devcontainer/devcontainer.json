@@ -9,7 +9,7 @@
       "esbenp.prettier-vscode",
       "ms-vscode.vscode-typescript-next",
       "octref.vetur",
-    ],
+    ],>
     "remoteUser": "root"
   }
   

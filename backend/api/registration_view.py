@@ -1,9 +1,10 @@
 import json
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
+from django.views.decorators.csrf import csrf_exempt
 
 User = get_user_model()
-
+@csrf_exempt
 def register_user(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -17,7 +18,11 @@ def register_user(request):
         # django handles password hashing so we don't need to hash it our self
         try:
             user = User.objects.create_user(username=username, email=email, password=password)
-            return JsonResponse({"message": "User registered successfully", "user_id": user.id}, staus=201)
+            if not user:
+                print('user is not created')
+            return JsonResponse({"message": "User registered successfully", "user_id": user.id}, status=201)
         except Exception as e:
+            print('Registration Exception:', e)
             return JsonResponse({"error": str(e)}, status=400)
-    return JsonResponse({"error": "Invalid request method"}, status=405)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)

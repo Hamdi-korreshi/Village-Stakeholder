@@ -12,16 +12,7 @@
 
 export default {
     name: "Dashbaord",
-    components: { RandomStringDisplay },
-    methods: {
-        async signoutUser () {
-            try {
-                await signout();
-                this.$emit("logout");
-            } catch (error) {
-                console.error("Sign out error", error);
-            }
-        },
-    },
+    components: { RandomStringDisplay }
+    
 };
 </script>
