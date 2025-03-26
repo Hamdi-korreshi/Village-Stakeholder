@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 # Create your models here.
 
 class User(AbstractUser):
+    email = models.EmailField('email address', unique=True)
     groups = models.ManyToManyField(
         Group,
         related_name='api_user_set',
@@ -21,6 +22,9 @@ class User(AbstractUser):
 
     profile_settings = models.JSONField(default=dict, null= True, blank=True)
     profile_picture = models.URLField(max_length=255, null=True, blank=True)
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
 
 class Calendar_event(models.Model):
     event_id = models.BigAutoField(primary_key=True)

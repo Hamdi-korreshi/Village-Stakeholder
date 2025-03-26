@@ -12,6 +12,8 @@ def register_user(request):
         username = data.get("username")
         password = data.get("password")
 
+        print(f"Register attempt: email={email}, password={password}, username={username}", file=sys.stderr)
+
         if not username or not password:
             return JsonResponse({"error": "Missing username or password"}, status=400)
         

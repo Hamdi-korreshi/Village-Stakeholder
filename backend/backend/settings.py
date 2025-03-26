@@ -137,7 +137,7 @@ USE_I18N = True
 USE_TZ = True
 
 # gamel needs to add this
-# AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'api.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -148,3 +148,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+    'api.new_auth.email_or_username_backend',
+    'django.contrib.auth.backends.ModelBackend', 
+]
