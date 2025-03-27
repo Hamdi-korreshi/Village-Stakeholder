@@ -84,7 +84,7 @@ Errors:
 ```
 
 ## Signing Out
-Post /village/v1/logout HTTP1.1
+Post /village/v1/signout HTTP1.1
 Content application.json
 
 ```json
