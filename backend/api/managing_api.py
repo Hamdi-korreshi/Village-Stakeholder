@@ -1,7 +1,8 @@
 from .models import villager, Village ;
+############### Retrieving Village Data
 
 # Sends the json of the user's village participants 
-def personal_village_members(request, villager_id): 
+def personal_village_members(request): 
     owner_id= request.user.id # Gets the logged-in user's ID
     
     query = villager.objects.filter(owner_id = owner_id).select_related("user")
@@ -15,6 +16,7 @@ def personal_village_members(request, villager_id):
     ]
     
     return response_data
+
 
 # Sends the json of the villages the user is apart of
 def list_user_villages(request):
@@ -68,3 +70,64 @@ def get_village_participants(request, village_id):
     response_data["members"] = members
 
     return response_data
+
+
+############### Managing Villagers
+
+# Adds/Invites a user to current user's village
+def add_villager(request):
+    response = ""
+    if request.method == "POST":
+        current_user = request.user  # Get the logged-in user
+        village_id = request.POST.get("village_id")  
+        villager_id = request.POST.get("villager_id")  
+
+        # Check if the village exists and the current user is the owner
+        village = Village.objects.filter(id=village_id, owner=current_user).first()
+        if not village:
+            return {"error": "You do not own this village or it does not exist."}
+
+        # Check if the villager exists
+        villager_to_add = villager.objects.filter(id=villager_id).first()
+        if not villager_to_add:
+            return {"error": "The villager does not exist."}
+
+        # Add the villager to the village
+        village.residents.add(villager_to_add.user)
+        village.save()
+
+        response = {"success": f"Villager {villager_to_add.user.username} has been added to the village."}
+    else:
+        response = {"error": "Invalid request method. Only POST is allowed."}
+
+    return response
+
+    
+# Removes a specific villager from the current user's village
+def remove_villager(request):
+        response = ""
+        if request.method == "POST":
+            current_user = request.user  
+            village_id = request.POST.get("village_id")  
+            villager_id = request.POST.get("villager_id")  
+
+            # Check if the village exists and the current user is the owner
+            village = Village.objects.filter(id=village_id, owner=current_user).first()
+            if not village:
+                return {"error": "You do not own this village or it does not exist."}
+
+            # Check if the villager exists in the village
+            villager_to_remove = villager.objects.filter(id=villager_id).first()
+            if not villager_to_remove or villager_to_remove.user not in village.residents.all():
+                return {"error": "The villager is not part of this village."}
+
+            # Remove the villager from the village and save the changes
+            village.residents.remove(villager_to_remove.user)
+            village.save()
+
+            response = {"success": f"Villager {villager_to_remove.user.username} has been removed from the village."}
+        else:
+            response = {"error": "Invalid request method. Only POST is allowed."}
+
+        return response
+    
