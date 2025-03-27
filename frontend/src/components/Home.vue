@@ -134,7 +134,7 @@ import Login from './login.vue';
 }
 
 .cta-button {
-  background-color: #646cff;
+  background-color: #4472C4;
   color: white;
   padding: 0.8rem 2rem;
   border: none;
@@ -145,7 +145,7 @@ import Login from './login.vue';
 }
 
 .cta-button:hover {
-  background-color: #535bf2;
+  background-color: #4472C4;
 }
 
 /* Mission Section */
@@ -214,7 +214,7 @@ import Login from './login.vue';
 }
 
 .login-form button {
-  background-color: #646cff;
+  background-color: #4472C4;
   color: white;
   padding: 0.8rem;
   border: none;
@@ -225,7 +225,7 @@ import Login from './login.vue';
 }
 
 .login-form button:hover {
-  background-color: #535bf2;
+  background-color: #4472C4;
 }
 
 .message {

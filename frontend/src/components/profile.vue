@@ -382,7 +382,7 @@ h4 {
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #646cff;
+  border: 3px solid #4472C4;
 }
 
 .avatar-upload-button {
@@ -392,7 +392,7 @@ h4 {
   transform: translateX(-50%);
   background-color: #1a1a1a;
   color: rgba(255, 255, 255, 0.87);
-  border: 1px solid #646cff;
+  border: 1px solid #4472C4;
   padding: 0.5em 1em;
   border-radius: 8px;
   font-size: 0.9em;
@@ -401,7 +401,7 @@ h4 {
 }
 
 .avatar-upload-button:hover {
-  border-color: #535bf2;
+  border-color: #4472C4;
 }
 
 /* Details Section */
@@ -432,7 +432,7 @@ h4 {
   width: 100%;
   padding: 0.6em;
   border-radius: 8px;
-  border: 1px solid #646cff;
+  border: 1px solid #4472C4;
   background-color: #242424;
   color: rgba(255, 255, 255, 0.87);
   font-family: inherit;
@@ -446,7 +446,7 @@ h4 {
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: #535bf2;
+  border-color: #4472C4;
   outline: none;
 }
 
@@ -477,13 +477,13 @@ button {
 }
 
 .edit-button, .save-button {
-  background-color: #646cff;
+  background-color: #4472C4;
   color: white;
 }
 
 .edit-button:hover, .save-button:hover {
-  background-color: #535bf2;
-  border-color: #535bf2;
+  background-color: #4472C4;
+  border-color: #4472C4;
 }
 
 .cancel-button {
@@ -492,7 +492,7 @@ button {
 }
 
 .cancel-button:hover {
-  border-color: #646cff;
+  border-color: #4472C4;
 }
 
 .delete-account-button {
@@ -557,13 +557,13 @@ button {
   }
 
   .avatar {
-    border-color: #747bff;
+    border-color: #4472C4;
   }
 
   .avatar-upload-button {
     background-color: #f9f9f9;
     color: #213547;
-    border-color: #747bff;
+    border-color: #4472C4;
   }
 
   .details-section, .settings-section {
@@ -579,7 +579,7 @@ button {
   .form-group textarea {
     background-color: #ffffff;
     color: #213547;
-    border-color: #747bff;
+    border-color: #4472C4;
   }
 
   .form-group input:disabled,
@@ -594,11 +594,11 @@ button {
   }
 
   .edit-button, .save-button {
-    background-color: #747bff;
+    background-color: #4472C4;
   }
 
   .edit-button:hover, .save-button:hover {
-    background-color: #646cff;
+    background-color: #4472C4;
   }
 
   .cancel-button {

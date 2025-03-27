@@ -146,7 +146,7 @@
     padding: 0.6em;
     margin-top: 0.5rem;
     border-radius: 8px;
-    border: 1px solid #646cff;
+    border: 1px solid #4472C4;
     background-color: #242424;
     color: rgba(255, 255, 255, 0.87);
     font-family: inherit;
@@ -155,7 +155,7 @@
   }
   
   input:focus {
-    border-color: #535bf2;
+    border-color: #4472C4;
     outline: none;
   }
   
@@ -167,14 +167,14 @@
   button {
     width: 100%;
     margin-top: 1rem;
-    background-color: #646cff;
+    background-color: #4472C4;
     color: white;
     transition: background-color 0.25s;
   }
   
   button:hover:not(:disabled) {
-    background-color: #535bf2;
-    border-color: #535bf2;
+    background-color: #4472C4;
+    border-color: #4472C4;
   }
   
   button:disabled {
@@ -214,7 +214,7 @@
     input {
       background-color: #ffffff;
       color: #213547;
-      border-color: #747bff;
+      border-color: #4472C4;
     }
     
     input::placeholder {
@@ -222,11 +222,11 @@
     }
     
     button {
-      background-color: #747bff;
+      background-color: #4472C4;
     }
     
     button:hover:not(:disabled) {
-      background-color: #646cff;
+      background-color: #4472C4;
     }
     
     button:disabled {

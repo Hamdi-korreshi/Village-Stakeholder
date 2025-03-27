@@ -209,7 +209,7 @@
     padding: 0.6em;
     margin-top: 0.5rem;
     border-radius: 8px;
-    border: 1px solid #646cff;
+    border: 1px solid #4472C4;
     background-color: #242424;
     color: rgba(255, 255, 255, 0.87);
     font-family: inherit;
@@ -220,7 +220,7 @@
   }
   
   input:focus {
-    border-color: #535bf2;
+    border-color: #4472C4;
     outline: none;
   }
   
@@ -243,12 +243,12 @@
   }
   
   button:first-of-type {
-    background-color: #646cff;
+    background-color: #4472C4;
     color: white;
   }
   
   button:first-of-type:hover:not(:disabled) {
-    background-color: #535bf2;
+    background-color: #4472C4;
   }
   
   button:disabled {
@@ -304,7 +304,7 @@
     input {
       background-color: #ffffff;
       color: #213547;
-      border-color: #747bff;
+      border-color: #4472C4;
     }
   
     input::placeholder {
@@ -312,11 +312,11 @@
     }
   
     button:first-of-type {
-      background-color: #747bff;
+      background-color: #4472C4;
     }
   
     button:first-of-type:hover:not(:disabled) {
-      background-color: #646cff;
+      background-color: #4472C4;
     }
   
     button:disabled {
