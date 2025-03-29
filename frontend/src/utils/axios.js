@@ -16,7 +16,7 @@ apiClient.interceptors.request.use(
     const csrfToken = getCookie('csrftoken');
     if (!csrfToken) {
       // Fetch CSRF token explicitly from Django backend
-      await axios.get(`${import.meta.env.VITE_API_URL}/csrf/`, {
+      await axios.get(`${import.meta.env.VITE_API_URL}/village/v1/csrf/`, {
         withCredentials: true
       });
       config.headers['X-CSRFToken'] = getCookie('csrftoken');

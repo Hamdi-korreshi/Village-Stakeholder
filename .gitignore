@@ -6,3 +6,11 @@ __pycache__/
 *.pyd
 node_modules/
 .env
+venv/
+bin/
+pyvenv.cfg
+backend/env
+backend/bin
+backend/lib
+backend/pyvenv.cfg
+backend/include

@@ -1,175 +1,173 @@
 <template>
-    <div>
-      <h2>Login</h2>
-      <!--<LoadingSpinner v-if="loading" />-->
-      <form class="container" @submit.prevent="handleLogin">
-        <label for="username">
-          Username:
-          <br />
-          <input
-            id="username"
-            type="text"
-            placeholder="Username"
-            v-model="username"
-            required
-          />
-        </label>
+  <div>
+    <h2>Login</h2>
+    <form @submit.prevent="signinUser">
+      <label for="identifier">
+        Email or Username:
         <br />
-        <label for="password">
-          Password:
-          <br />
-          <input
-            id="password"
-            type="password"
-            placeholder="Password"
-            v-model="password"
-            required
-          />
-        </label>
+        <input
+          id="identifier"
+          type="text"
+          placeholder="Username"
+          v-model="identifier"
+          required
+        />
+      </label>
+      <br />
+      <label for="password">
+        Password:
         <br />
-        <button type="submit">Login</button>
-      </form>
-      <p class="message">{{ message }}</p>
-    </div>
-    <button @click="changeValue" class="bg-blue-300 p-4">
-      <!--{{ temp }}-->
-    </button>
-  </template>
-  
-  <script>
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  //import LoadingSpinner from './LoadingSpinner.vue';
-  
-  export default {
-    components: {
-      //LoadingSpinner,
-    },
-    props: {
-      onLoginSuccess: {
-        type: Function,
-        required: true,
-      },
-    },
-    setup(props) {
-      const username = ref('');
-      const password = ref('');
-      const message = ref('');
-      const loading = ref(false);
-      const router = useRouter();
-  
-      const handleLogin = async () => {
-        loading.value = true;
-  
-        try {
-          const response = await fetch('http://127.0.0.1:8000/api/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-              username: username.value,
-              password: password.value,
-            }),
-          });
-  
-          loading.value = false;
-  
-          if (response.ok) {
-            const data = await response.json();
-            const token = data.token;
-            localStorage.setItem('access_token', token);
-            message.value = 'Login successful';
-            props.onLoginSuccess();
-            router.push({ path: '/', state: { message: 'Login Successful' } });
-          } else {
-            const errorData = await response.json();
-            message.value = errorData.detail || 'Invalid username or password';
-          }
-        } catch (error) {
-          loading.value = false;
-          message.value = 'An error occurred: ' + error.message;
-        }
-      };
-  
-      return {
-        username,
-        password,
-        message,
-        loading,
-        handleLogin,
-      };
-    },
-  };
-  </script>
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          v-model="password"
+          required
+        />
+      </label>
+      <br />
+      <button type="submit">Login</button>
+    </form>
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+  </div>
+</template>
 
-  <script setup>
-    import {ref} from "vue"
-    const temp = ref("test")
-    function changeValue(){
-      temp.value = "placeholder"
-    }
-  </script>
-  
-  <style scoped>
-  /* Overall layout */
-  div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  
+<script>
+import { signin } from "../services/authServices.js";
+
+export default {
+  name: "LoginForm",
+  data() {
+    return {
+      identifier: "",
+      password: "",
+      errorMessage: "",
+    };
+  },
+  methods: {
+    async signinUser() {
+      this.errorMessage = "";
+      try {
+        const response = await signin(this.identifier, this.password);
+        
+        console.log("API Response:", response); // Debug log
+        
+        // Handle successful login
+        if (response.message === "Login successful") {
+          console.log("Redirecting to dashboard...");
+          this.$router.push({ name: "Dashboard" });
+          return; // Important: Stop further execution
+        }
+        
+        // Handle other cases
+        this.errorMessage = response.message || "Login failed. Please try again.";
+        
+      } catch (error) {
+        console.error("Login error:", error);
+        this.errorMessage = error.response?.data?.message || 
+                          "Login failed. Please check your credentials.";
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* Your existing styles remain the same */
+div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+h2 {
+  font-size: 2em;
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+/* Form container */
+.container {
+  width: 100%;
+  padding: 2em;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Input fields */
+label {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 1em;
+  color: rgba(255, 255, 255, 0.87);
+  text-align: left;
+}
+
+input {
+  width: 100%;
+  padding: 0.6em;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #4472C4;
+  background-color: #242424;
+  color: rgba(255, 255, 255, 0.87);
+  font-family: inherit;
+  font-size: 1em;
+  transition: border-color 0.25s;
+}
+
+input:focus {
+  border-color: #4472C4;
+  outline: none;
+}
+
+/* Button styles */
+button {
+  width: 100%;
+  margin-top: 1rem;
+  background-color: #4472C4;
+  color: white;
+}
+
+button:hover {
+  background-color: #4472C4;
+  border-color: #4472C4;
+}
+
+/* Message text */
+.message {
+  margin-top: 1.5rem;
+  color: #ff6b6b;
+  font-size: 0.9em;
+}
+
+/* Light mode adaptation */
+@media (prefers-color-scheme: light) {
   h2 {
-    font-size: 2em;
-    margin-bottom: 1.5rem;
-    color: rgba(255, 255, 255, 0.87);
+    color: #213547;
   }
   
-  /* Form container */
   .container {
-    width: 100%;
-    padding: 2em;
-    border-radius: 8px;
-    background-color: #1a1a1a;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
-  /* Input fields */
   label {
-    display: block;
-    margin-bottom: 1rem;
-    font-size: 1em;
-    color: rgba(255, 255, 255, 0.87);
-    text-align: left;
+    color: #213547;
   }
   
   input {
-    width: 100%;
-    padding: 0.6em;
-    margin-top: 0.5rem;
-    border-radius: 8px;
+    background-color: #ffffff;
+    color: #213547;
     border: 1px solid #4472C4;
-    background-color: #242424;
-    color: rgba(255, 255, 255, 0.87);
-    font-family: inherit;
-    font-size: 1em;
-    transition: border-color 0.25s;
   }
   
-  input:focus {
-    border-color: #4472C4;
-    outline: none;
-  }
-  
-  /* Button styles */
   button {
-    width: 100%;
-    margin-top: 1rem;
     background-color: #4472C4;
-    color: white;
   }
   
   button:hover {
@@ -177,45 +175,8 @@
     border-color: #4472C4;
   }
   
-  /* Message text */
   .message {
-    margin-top: 1.5rem;
-    color: #ff6b6b;
-    font-size: 0.9em;
+    color: #ff5252;
   }
-  
-  /* Light mode adaptation */
-  @media (prefers-color-scheme: light) {
-    h2 {
-      color: #213547;
-    }
-    
-    .container {
-      background-color: #f9f9f9;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    label {
-      color: #213547;
-    }
-    
-    input {
-      background-color: #ffffff;
-      color: #213547;
-      border: 1px solid #4472C4;
-    }
-    
-    button {
-      background-color: #4472C4;
-    }
-    
-    button:hover {
-      background-color: #4472C4;
-      border-color: #4472C4;
-    }
-    
-    .message {
-      color: #ff5252;
-    }
-  }
-  </style>
+}
+</style>

@@ -11,7 +11,7 @@
 
 <script>
 import RegisterForm from './RegisterForm.vue';
-
+console.log("API_URL:", import.meta.env.VITE_API_URL)
 export default {
     name: "RegisterPage",
     components: { RegisterForm },

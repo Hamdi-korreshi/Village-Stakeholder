@@ -49,6 +49,13 @@
               active-class="text-blue-700 font-bold"
             >Verify Email</router-link>
           </li>
+          <li>
+            <router-link 
+              to="/calendar" 
+              class="text-xs cursor-pointer text-stone-500 hover:text-black hover:font-bold"
+              active-class="text-blue-700 font-bold"
+            >Calendar</router-link>
+          </li>
         </ul>
       </nav>
     </header>

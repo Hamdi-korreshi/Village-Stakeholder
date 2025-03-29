@@ -6,6 +6,8 @@ import Registration from '../registration.vue';
 import Profile from '../profile.vue';
 import PasswordReset from '../passwordReset.vue';
 import EmailVerification from '../emailVerification.vue';
+import Calendar from '../CalendarPage/components/CalendarScheduling.vue';
+import Dashboard from '../Dashboard.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -14,6 +16,8 @@ const routes = [
   { path: '/profile', component: Profile },
   { path: '/passwordReset', component: PasswordReset },
   { path: '/emailVerification', component: EmailVerification },
+  { path: '/calendar', component: Calendar },
+  { path: '/Dashboard', name: 'Dashboard', component: Dashboard },
 ];
 
 const router = createRouter({

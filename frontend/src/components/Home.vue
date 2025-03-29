@@ -20,14 +20,14 @@
       <h2>WELCOME TO THE BTC PLATFORM</h2>
       <div class="login-container">
         <h3>Login to Your Account</h3>
-        <form class="login-form" @submit.prevent="handleLogin">
-          <label for="username">
-            Username:
+        <form class="login-form" @submit.prevent="signinUser">
+          <label for="identifier">
+            Email or Username:
             <input
-              id="username"
+              id="identifier"
               type="text"
-              placeholder="Username"
-              v-model="username"
+              placeholder="Username or Email"
+              v-model="identifier"
               required
             />
           </label>
@@ -43,7 +43,7 @@
           </label>
           <button type="submit">Login</button>
         </form>
-        <p class="message">{{ message }}</p>
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </div>
     </section>
   </div>
@@ -52,60 +52,47 @@
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { signin } from "../services/authServices.js";
 
 export default {
   setup() {
-    const username = ref('');
+    const identifier = ref('');
     const password = ref('');
-    const message = ref('');
+    const errorMessage = ref('');
     const router = useRouter();
 
-    const handleLogin = async () => {
+    const signinUser = async () => {
+      errorMessage.value = "";
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams({
-            username: username.value,
-            password: password.value,
-          }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          localStorage.setItem('access_token', data.token);
-          message.value = 'Login successful';
-          router.push({ path: '/dashboard', state: { message: 'Login Successful' } });
-        } else {
-          const errorData = await response.json();
-          message.value = errorData.detail || 'Invalid username or password';
+        const response = await signin(identifier.value, password.value);
+        
+        console.log("API Response:", response); // Debug log
+        
+        // Handle successful login
+        if (response.message === "Login successful") {
+          console.log("Redirecting to dashboard...");
+          router.push({ name: "Dashboard" });
+          return; // Important: Stop further execution
         }
+        
+        // Handle other cases
+        errorMessage.value = response.message || "Login failed. Please try again.";
+        
       } catch (error) {
-        message.value = 'An error occurred: ' + error.message;
+        console.error("Login error:", error);
+        errorMessage.value = error.response?.data?.message || 
+                          "Login failed. Please check your credentials.";
       }
     };
 
     return {
-      username,
+      identifier,
       password,
-      message,
-      handleLogin,
+      errorMessage,
+      signinUser,
     };
   },
 };
-</script>
-
-<script setup>
-// Import the Login component
-import Login from './login.vue';
-
-    function handleLoginSuccess() {
-      // Handle login success logic here
-      console.log('Login successful!');
-      // You can redirect the user or update the state as needed
-    }
 </script>
 
 <style scoped>
@@ -228,7 +215,7 @@ import Login from './login.vue';
   background-color: #4472C4;
 }
 
-.message {
+.error-message {
   margin-top: 1rem;
   color: #ff5252;
   font-size: 0.9rem;

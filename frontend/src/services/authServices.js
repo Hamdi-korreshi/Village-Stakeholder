@@ -12,7 +12,7 @@ export const register = async (email, username, password) => {
     });
     return response.data;
 }
-
+console.log("API_URL:", import.meta.env.VITE_API_URL)
 export const signin = async (identifier, password) =>  {
     const response = await apiClient.post("/village/v1/login/",
         {
