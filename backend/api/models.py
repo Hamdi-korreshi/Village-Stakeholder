@@ -1,11 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
+# Create your models here.
+
 class user(AbstractUser):
+    email = models.EmailField('email address', unique=True)
     profile_settings = models.JSONField(default=dict, null=True, blank=True)
     profile_picture = models.URLField(max_length=255, null=True, blank=True)
     groups = models.ManyToManyField(Group, related_name="api_users_groups", blank=True)
     user_permissions = models.ManyToManyField(Permission, related_name="api_users_permissions", blank=True)
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
 
 class calendar_event(models.Model):
     event_id = models.BigAutoField(primary_key=True)
@@ -86,8 +91,8 @@ class user_support_relation(models.Model):
 
 class TestData(models.Model):
     name = models.CharField(max_length=100)
-    value = models.IntegerField()
+    value = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return self.value

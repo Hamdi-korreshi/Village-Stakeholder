@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-zs(ocl3(d^05a*(#wb&3lgp#1k1w#v%6()-yorv*ez_nhfk6n2
 DEBUG = True
 
 ALLOWED_HOSTS = [
-     "localhost",
+    "localhost",
     "127.0.0.1",
     "backend",
 ]
@@ -42,10 +42,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'api'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -109,6 +111,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173"
+]
+
+CORS_TRUSTED_ORIGINS = [
+    "http://localhost:5173"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -121,6 +136,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+# gamel needs to add this
+AUTH_USER_MODEL = 'api.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -131,3 +148,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+    'api.new_auth.email_or_username_backend',
+    'django.contrib.auth.backends.ModelBackend', 
+]
