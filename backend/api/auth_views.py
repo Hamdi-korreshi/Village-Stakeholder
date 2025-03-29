@@ -2,7 +2,7 @@ import json, random, sys
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-from .models import User
+from .models import user
 from django.db.models import Q
 
 @ensure_csrf_cookie
@@ -18,10 +18,10 @@ def user_login(request):
         identifier = data.get('identifier').strip() 
         password = data.get('password')
 
-        user = authenticate(request, username=identifier, password=password)
+        curr_user = authenticate(request, username=identifier, password=password)
 
-        if user is not None:
-            login(request, user)
+        if curr_user is not None:
+            login(request, curr_user)
             return JsonResponse({"message": "Login successful"})
         else:
             return JsonResponse({"error": "Invalid credentials"}, status=401)

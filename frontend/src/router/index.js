@@ -3,6 +3,7 @@ import LoginPage from '../components/LoginPage.vue'
 import Dashboard from '../components/Dashboard.vue'
 import RegisterPage from '../components/RegisterPage.vue'
 import TestAxios from '../components/TestAxios.vue'
+import ChangePassword from '../components/ChangePassword.vue'
 const routes = [
     {
         path: '/login',
@@ -26,6 +27,11 @@ const routes = [
         path: '/test-axios',
         name: 'TestAxios',
         component: TestAxios,
+    },
+    {
+        path: '/change-pass',
+        name: 'Change-password',
+        component: ChangePassword
     },
     {
         path: '/',
