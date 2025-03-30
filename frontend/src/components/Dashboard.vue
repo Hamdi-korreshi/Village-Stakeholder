@@ -23,8 +23,8 @@
 <script>
 import { signout } from "../services/authServices"
 import RandomStringDisplay from "./RandomStringDisplay.vue"
-import AddVillagerButton from "./add_villager.vue"
-import MakeVillageButton from "./make_village.vue"  //  import the new button
+import AddVillagerButton from "./test_add_villager.vue"
+import MakeVillageButton from "./test_make_village.vue" 
 
 export default {
   name: "Dashboard",

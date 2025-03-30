@@ -10,31 +10,27 @@ import { addVillagerToVillage } from "../services/villageServices.js";
 export default {
   name: "AddVillagerButton",
   props: {
-    userId: {
-      type: Number,
-      required: true,
+    user_name: {
+      type: String,
+      required: true
     },
-    associateId: {
-      type: Number,
-      required: true,
-    },
-    relationId: {
-      type: Number,
-      required: true,
-    },
+    user_role: {
+      type: String,
+      required: true
+    }
   },
   methods: {
     async addVillager() {
       try {
-        const response = await addVillagerToVillage(this.userId, this.associateId, this.relationId);
+        const response = await addVillagerToVillage(this.user_name, this.user_role);
         console.log("Villager added successfully:", response);
         alert("Villager added!");
       } catch (error) {
         console.error("Error adding villager:", error);
         alert("Failed to add villager.");
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

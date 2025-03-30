@@ -16,10 +16,15 @@ export const getVillageParticipants = async (user) => {
     return response.data;
 };
 
-export const addVillagerToVillage = async (villagerId) => {
-    const response = await apiClient.post(`add-villager/${villagerId}/`);
+// services/villageServices.js
+export const addVillagerToVillage = async (villagerUsername, supportRole) => {
+    const response = await apiClient.post(`/village/v1/add-villager/`, {
+      villager_username: villagerUsername,
+      support_role: supportRole
+    });
     return response.data;
-};
+  };
+  
 
 export const removeVillagerFromVillage = async (user, villagerId) => {
     const formData = new FormData();
