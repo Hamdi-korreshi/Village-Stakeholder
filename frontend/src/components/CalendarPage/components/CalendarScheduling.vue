@@ -10,6 +10,7 @@
           <section class="w-[647px] flex-shrink-0">
             <CalendarGrid
               :selected-date="selectedDate"
+              :scheduled-events="scheduledEvents"
               @select-date="handleDateSelect"
             />
           </section>
@@ -18,6 +19,10 @@
             <SchedulePanel
               :selected-date="selectedDate"
               :events="scheduledEvents"
+              @new-schedule="addScheduleItem"
+              @remove-schedule="removeScheduleItem"
+              :months="months"
+              :years="years"
             />
           </section>
         </div>
@@ -31,7 +36,19 @@ import { ref } from "vue";
 import CalendarHeader from "./CalendarHeader.vue";
 import CalendarGrid from "./CalendarGrid.vue";
 import SchedulePanel from "./SchedulePanel.vue";
-import type { DayCell, ScheduleItem } from "./types";
+
+export interface ScheduleItem {
+  date: number;
+  time: string;
+  description: string;
+}
+
+export interface DayCell {
+  date: number;
+  isCurrentMonth: boolean;
+  hasSchedule?: boolean;
+  scheduleType?: "blue" | "green" | "default";
+}
 
 const selectedDate = ref<number>(7); // Default to March 7
 
@@ -68,7 +85,74 @@ const scheduledEvents = ref<ScheduleItem[]>([
   },
 ]);
 
+const parseTime = (timeStr: string) => {
+  // Extract time and period from the start time
+  const [time, period] = timeStr.split(/(?:am|pm)/i);
+  const [hours, minutes] = time.trim().split(":").map(Number);
+  const isPM = period.trim().toLowerCase() === "pm";
+
+  return {
+    hours: hours === 12 ? 0 : hours, // Convert 12 to 0 for proper sorting
+    minutes,
+    isPM,
+  };
+};
+
+const sortScheduleEvents = () => {
+  scheduledEvents.value.sort((a, b) => {
+    const timeA = parseTime(a.time.split(" - ")[0]);
+    const timeB = parseTime(b.time.split(" - ")[0]);
+
+    // First sort by AM/PM
+    if (timeA.isPM !== timeB.isPM) {
+      return timeA.isPM ? 1 : -1;
+    }
+
+    // Then sort by hours
+    if (timeA.hours !== timeB.hours) {
+      return timeA.hours - timeB.hours;
+    }
+
+    // Finally sort by minutes
+    return timeA.minutes - timeB.minutes;
+  });
+};
+
 const handleDateSelect = (date: number) => {
   selectedDate.value = date;
+};
+
+const addScheduleItem = (item: ScheduleItem) => {
+  scheduledEvents.value.push(item);
+  sortScheduleEvents();
+};
+
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 5 }, (_, i) => currentYear + i);
+
+const removeScheduleItem = (itemToRemove: ScheduleItem) => {
+  scheduledEvents.value = scheduledEvents.value.filter(
+    (item) =>
+      !(
+        item.date === itemToRemove.date &&
+        item.time === itemToRemove.time &&
+        item.description === itemToRemove.description
+      ),
+  );
 };
 </script>

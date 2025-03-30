@@ -19,8 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed } from "vue";
 import CalendarCell from "./CalendarCell.vue";
+
 export interface ScheduleItem {
   date: number;
   time: string;
@@ -34,9 +35,9 @@ export interface DayCell {
   scheduleType?: "blue" | "green" | "default";
 }
 
-
 const props = defineProps<{
   selectedDate: number;
+  scheduledEvents: ScheduleItem[];
 }>();
 
 const emit = defineEmits<{
@@ -45,7 +46,12 @@ const emit = defineEmits<{
 
 const weekDays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
-const calendarDays = ref<DayCell[]>([
+const getDayScheduleType = (date: number) => {
+  const hasEvents = props.scheduledEvents.some((event) => event.date === date);
+  return hasEvents ? "green" : "default";
+};
+
+const calendarDays = computed(() => [
   // Previous month
   ...[23, 24, 25, 26, 27, 28].map((date) => ({
     date,
@@ -55,7 +61,7 @@ const calendarDays = ref<DayCell[]>([
   ...Array.from({ length: 31 }, (_, i) => ({
     date: i + 1,
     isCurrentMonth: true,
-    scheduleType: i + 1 === 7 ? "green" : "default", // Only keep green for day 7
+    scheduleType: getDayScheduleType(i + 1),
   })),
   // Next month
   ...[1, 2, 3, 4, 5].map((date) => ({
