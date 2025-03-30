@@ -1,9 +1,10 @@
 import apiClient from "../utils/axios.js";
+import { store_user_info } from '../utils/stores'
 
 // change later on for production to real URL
 
 export const register = async (email, username, password) => {
-    const response = await apiClient.post("/village/v1/register/", {
+    const response = await apiClient.post("register/", {
         email,
         username,
         password
@@ -14,7 +15,7 @@ export const register = async (email, username, password) => {
 }
 
 export const signin = async (identifier, password) =>  {
-    const response = await apiClient.post("/village/v1/login/",
+    const response = await apiClient.post("login/",
         {
             identifier,
             password
@@ -22,11 +23,20 @@ export const signin = async (identifier, password) =>  {
             timeout: 5000
         }
     );
+    console.log(response)
+    if ( response.data && response.data.user) {
+        const user_store = store_user_info();
+        user_store.set_user(response.data.user);
+    }
     return response.data;
 }
 
 export const signout = async () => {
-    const response = await apiClient.post("/village/v1/logout/");
+    const response = await apiClient.post("logout/");
+    if (response.data) {
+        const user_store = store_user_info()
+        user_store.clear_user();
+    }
     return response.data;
 }
 

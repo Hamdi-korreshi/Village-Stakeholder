@@ -14,7 +14,7 @@ class user(AbstractUser):
 
 class calendar_event(models.Model):
     event_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="events")
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="events")
     event_name = models.CharField(max_length=255, null=False)
     start_time = models.DateTimeField(null=False)
     end_time = models.DateTimeField(null=False)
@@ -24,21 +24,21 @@ class calendar_event(models.Model):
 
 class session(models.Model):
     session_id = models.BigAutoField(primary_key=True)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_session")
+    user = models.OneToOneField("user", on_delete=models.CASCADE, related_name="user_session")
     expiry = models.DateTimeField(null=False)
     tokens = models.TextField(null=False)
 
 class notification(models.Model):
     notification_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_notifications")
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_notifications")
     event = models.ForeignKey(calendar_event, on_delete=models.CASCADE, null=True, blank=True, related_name="event_notifications")
     message = models.TextField(null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
 class villager(models.Model):
     connection_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_villagers")
-    associate = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="associate_villagers")
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_villagers")
+    associate = models.ForeignKey("user", on_delete=models.CASCADE, related_name="associate_villagers")
     status = models.CharField(max_length=20, choices=[
         ("pending", "Pending"),
         ("accepted", "Accepted"),
@@ -47,17 +47,17 @@ class villager(models.Model):
     relation = models.ForeignKey('user_support_relation', on_delete=models.CASCADE, related_name='villager_relation')
 
 class Village(models.Model):
-    owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='owned_village')
+    owner = models.OneToOneField("user", on_delete=models.CASCADE, related_name='owned_village')
     description = models.TextField(null=True, blank=True)
-    residents = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='village_members')
+    residents = models.ManyToManyField("user", related_name='village_members')
 
     def __str__(self):
         return f"Village owned by {self.owner.username}"
 
 class message(models.Model):
     message_id = models.BigAutoField(primary_key=True)
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="messages_sent")
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="messages_received")
+    sender = models.ForeignKey("user", on_delete=models.CASCADE, related_name="messages_sent")
+    receiver = models.ForeignKey("user", on_delete=models.CASCADE, related_name="messages_received")
     message = models.TextField(null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -84,8 +84,8 @@ class user_support_relation(models.Model):
         ("mentor", "Mentor"),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_supporters")
-    supporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_supported")
+    user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supporters")
+    supporter = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supported")
     support_role = models.CharField(max_length=50, choices=support_role_choices, null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
