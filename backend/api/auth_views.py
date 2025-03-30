@@ -22,7 +22,14 @@ def user_login(request):
 
         if curr_user is not None:
             login(request, curr_user)
-            return JsonResponse({"message": "Login successful"})
+            return JsonResponse({
+                "message": "Login successful!",
+                "user": {
+                    "id": curr_user.id,
+                    "username": curr_user.username,
+                    "email": curr_user.email
+                }
+                                 }, status=200)
         else:
             return JsonResponse({"error": "Invalid credentials"}, status=401)
 
