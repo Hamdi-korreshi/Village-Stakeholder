@@ -23,7 +23,7 @@ export default {
       this.error = "";
       try {
         const response = await delete_profile();
-        this.message = response.detail || "Profile deleted successfully.";
+        this.message = response.message || "Profile deleted successfully.";
         this.$router.push({ name: "Login" }); // redirect to login after deletion
       } catch (err) {
         this.error =
