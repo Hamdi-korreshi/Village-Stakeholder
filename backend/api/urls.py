@@ -1,5 +1,5 @@
 from django.urls import path
-from .auth_views import get_csrf_token, user_login, user_logout, delete_profile
+from .auth_views import get_csrf_token, user_login, user_logout, delete_profile, update_profile, get_profile
 from .registration_view import register_user
 from .views import random_string
 from .pass_reset import ChangePasswordView
@@ -11,4 +11,6 @@ urlpatterns = [ path('register/', register_user, name='register_user'),
     path('random-string/', random_string, name='random_string'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('delete-profile/', delete_profile, name='delete_profile'),
+    path('update-profile/', update_profile, name='update_profile'),
+    path('get-profile/', get_profile, name='get_profile'),
     ]

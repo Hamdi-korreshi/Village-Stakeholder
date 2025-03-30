@@ -7,6 +7,12 @@
         <div>
         <router-link to='/delete-profile'>Delete Profile</router-link>
         </div>
+        <div>
+        <router-link to='/update-profile'>Update Profile</router-link>
+        </div>
+        <div>
+        <router-link to='/profile'>See Current Profile</router-link>
+        </div>
     </div>
 </template>
 
