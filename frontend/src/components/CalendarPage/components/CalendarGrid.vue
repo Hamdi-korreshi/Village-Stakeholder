@@ -21,7 +21,19 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CalendarCell from "./CalendarCell.vue";
-import type { DayCell } from "./types";
+export interface ScheduleItem {
+  date: number;
+  time: string;
+  description: string;
+}
+
+export interface DayCell {
+  date: number;
+  isCurrentMonth: boolean;
+  hasSchedule?: boolean;
+  scheduleType?: "blue" | "green" | "default";
+}
+
 
 const props = defineProps<{
   selectedDate: number;
