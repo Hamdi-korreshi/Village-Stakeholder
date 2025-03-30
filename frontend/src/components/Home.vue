@@ -53,9 +53,16 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { signin } from "../services/authServices.js";
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 export default {
   setup() {
+
+    toast('Welcome to the Village', {
+      autoClose: 2000,
+    });
+
     const identifier = ref('');
     const password = ref('');
     const errorMessage = ref('');
@@ -71,17 +78,29 @@ export default {
         // Handle successful login
         if (response.message === "Login successful") {
           console.log("Redirecting to dashboard...");
-          router.push({ name: "Dashboard" });
+          toast.success("Login successful!", {
+            autoClose: 5000, // 5 seconds
+          });
+          setTimeout(() => {
+            router.push({ name: "Dashboard" });
+          }, 2000);
+          //router.push({ name: "Dashboard" });
           return; // Important: Stop further execution
         }
         
         // Handle other cases
         errorMessage.value = response.message || "Login failed. Please try again.";
+        toast.error("Login failed. Please try again.", {
+          autoClose: 5000, // 5 seconds
+        });
         
       } catch (error) {
         console.error("Login error:", error);
         errorMessage.value = error.response?.data?.message || 
                           "Login failed. Please check your credentials.";
+        toast.error("Login failed. Please check your credentials.", {
+          autoClose: 5000, // 5 seconds
+        });
       }
     };
 

@@ -28,12 +28,14 @@
       <br />
       <button type="submit">Login</button>
     </form>
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+    <!--<p v-if="errorMessage" class="error">{{ errorMessage }}</p>-->
   </div>
 </template>
 
 <script>
 import { signin } from "../services/authServices.js";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default {
   name: "LoginForm",
@@ -55,17 +57,28 @@ export default {
         // Handle successful login
         if (response.message === "Login successful") {
           console.log("Redirecting to dashboard...");
-          this.$router.push({ name: "Dashboard" });
-          return; // Important: Stop further execution
+          toast.success("Login successful!", {
+            autoClose: 5000, // 5 seconds
+          });
+          setTimeout(() => {
+            this.$router.push({ name: "Dashboard" });
+          }, 2000);
+          return;
         }
         
         // Handle other cases
         this.errorMessage = response.message || "Login failed. Please try again.";
+        toast.error("Login failed. Please check your credentials.", {
+              autoClose: 5000, // 5 seconds
+          });
         
       } catch (error) {
         console.error("Login error:", error);
         this.errorMessage = error.response?.data?.message || 
                           "Login failed. Please check your credentials.";
+            toast.error("Login failed. Please check your credentials.", {
+              autoClose: 5000, // 5 seconds
+          });
       }
     },
   },

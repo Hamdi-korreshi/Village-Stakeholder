@@ -11,7 +11,7 @@ import Dashboard from '../Dashboard.vue';
 
 const routes = [
   { path: '/', component: Home },
-  { path: '/login', component: Login },
+  { path: '/login', name: 'login', component: Login },
   { path: '/registration', component: Registration },
   { path: '/profile', component: Profile },
   { path: '/passwordReset', component: PasswordReset },

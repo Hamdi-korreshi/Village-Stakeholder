@@ -43,13 +43,15 @@
           {{ loading ? 'Resetting...' : 'Reset Password' }}
         </button>
       </form>
-      <p v-if="passwordError" style="color: red">{{ passwordError }}</p>
-      <p class="message">{{ message }}</p>
+      <!--<p v-if="passwordError" style="color: red">{{ passwordError }}</p>
+      <p class="message">{{ message }}</p>-->
     </div>
   </template>
   
   <script>
   //import LoadingSpinner from './LoadingSpinner.vue';
+  import { toast } from "vue3-toastify";
+  import "vue3-toastify/dist/index.css";
   
   export default {
     components: {
@@ -70,6 +72,9 @@
         // Validate passwords match
         if (this.newPassword !== this.confirmPassword) {
           this.passwordError = 'Passwords do not match';
+          toast.error("Passwords do not match", {
+              autoClose: 5000, // 5 seconds
+          });
           return;
         }
   
@@ -93,13 +98,22 @@
           if (response.ok) {
             const data = await response.json();
             this.message = 'Password reset successful';
+            toast.success("Password reset successful", {
+              autoClose: 5000, // 5 seconds
+            });
           } else {
             const errorData = await response.json();
             this.message = errorData.detail || 'Password reset failed';
+            toast.error("Passwords reset failed", {
+              autoClose: 5000, // 5 seconds
+            });
           }
         } catch (error) {
           this.loading = false;
           this.message = 'An error occurred: ' + error.message;
+          toast.error("An error occured " + error.message, {
+              autoClose: 5000, // 5 seconds
+          });
         }
       },
     },

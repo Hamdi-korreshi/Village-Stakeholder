@@ -54,14 +54,16 @@
         {{ loading ? 'Registering...' : 'Register' }}
       </button>
     </form>
-    <p v-if="passwordError" style="color: red">{{ passwordError }}</p>
+    <!--<p v-if="passwordError" style="color: red">{{ passwordError }}</p>
     <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
-    <p v-if="message" class="message">{{ message }}</p>
+    <p v-if="message" class="message">{{ message }}</p>-->
   </div>
 </template>
 
 <script>
 import { register } from '../services/authServices.js'
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default {
   data() {
@@ -81,6 +83,9 @@ export default {
       // Check password match first
       if (this.password !== this.confirmPassword) {
         this.passwordError = 'Passwords do not match';
+        toast.error("Passwords do not match", {
+              autoClose: 5000, // 5 seconds
+        });
         return;
       }
       
@@ -94,14 +99,23 @@ export default {
         if (result.message === "User registered successfully") {
           this.message = 'Registration successful';
           this.$emit("registration-success");
+          toast.success("Registration Successful", {
+              autoClose: 5000, // 5 seconds
+          });
         } 
         else {
           this.errorMessage = result.error || "Registration failed.";
+          toast.error("Registration failed.", {
+              autoClose: 5000, // 5 seconds
+          });
         }
       }
       catch (error) {
         this.errorMessage = "Registration failed please check your input";
         console.error("Registration error:", error);
+        toast.error("Registration failed please check your input", {
+              autoClose: 5000, // 5 seconds
+        });
       }
       finally {
         this.loading = false;

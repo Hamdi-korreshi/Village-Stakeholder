@@ -58,84 +58,12 @@
             </div>
           </div>
         </div>
-  
-        <!-- User Management Section -->
-        <div class="user-management-section">
-          <div class="management-header">
-            <h3>User Management</h3>
-            <button @click="showAddUserModal = true" class="add-user-button">+ Add User</button>
-          </div>
-          
-          <div class="users-table">
-            <div class="table-header">
-              <div class="table-cell">ID</div>
-              <div class="table-cell">Username</div>
-              <div class="table-cell">Email</div>
-              <div class="table-cell">Role</div>
-              <div class="table-cell">Actions</div>
-            </div>
-            <div v-for="user in users" :key="user.id" class="table-row">
-              <div class="table-cell">{{ user.id }}</div>
-              <div class="table-cell">{{ user.username }}</div>
-              <div class="table-cell">{{ user.email }}</div>
-              <div class="table-cell">{{ user.role }}</div>
-              <div class="table-cell actions-cell">
-                <button @click="editUser(user)" class="edit-button">Edit</button>
-                <button @click="confirmDeleteUser(user)" class="delete-button">Delete</button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
   
       <!-- Random String Display -->
-      <div class="random-string-section">
+      <!--<div class="random-string-section">
         <RandomStringDisplay />
-      </div>
-  
-      <!-- Add User Modal -->
-      <modal v-if="showAddUserModal" @close="showAddUserModal = false">
-        <h3 slot="header">Add New User</h3>
-        <div slot="body">
-          <div class="form-group">
-            <label for="newUsername">Username</label>
-            <input id="newUsername" type="text" v-model="newUser.username" required />
-          </div>
-          <div class="form-group">
-            <label for="newEmail">Email</label>
-            <input id="newEmail" type="email" v-model="newUser.email" required />
-          </div>
-          <div class="form-group">
-            <label for="newPassword">Password</label>
-            <input id="newPassword" type="password" v-model="newUser.password" required />
-          </div>
-          <div class="form-group">
-            <label for="newRole">Role</label>
-            <select id="newRole" v-model="newUser.role">
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-              <option value="editor">Editor</option>
-            </select>
-          </div>
-        </div>
-        <div slot="footer">
-          <button @click="addUser" class="save-button">Save User</button>
-          <button @click="showAddUserModal = false" class="cancel-button">Cancel</button>
-        </div>
-      </modal>
-  
-      <!-- Delete Confirmation Modal -->
-      <modal v-if="showDeleteModal" @close="showDeleteModal = false">
-        <h3 slot="header">Confirm User Deletion</h3>
-        <div slot="body">
-          <p>Are you sure you want to delete user "{{ userToDelete.username }}"?</p>
-          <p>This action cannot be undone.</p>
-        </div>
-        <div slot="footer">
-          <button @click="deleteUser" class="confirm-delete-button">Delete</button>
-          <button @click="showDeleteModal = false" class="cancel-delete-button">Cancel</button>
-        </div>
-      </modal>
+      </div>-->
     </div>
   </template>
   
@@ -180,7 +108,7 @@
         try {
           const result = await signout();
           console.log(result.message);
-          router.push({ name: "Login" });
+          router.push({ name: "login" });
         } catch (error) {
           console.error("Sign out error", error);
         }
