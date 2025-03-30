@@ -13,6 +13,17 @@ export const register = async (email, username, password) => {
     });
     return response.data;
 }
+export const reset_password = async  (old_pass, new_pass, confirm_pass) => {
+    const response = await apiClient.post("change-password/", {
+        old_pass,
+        new_pass,
+        confirm_pass
+    }, {
+        timeout: 5000
+    })
+    console.log(response)
+    return response.data;
+}
 
 export const signin = async (identifier, password) =>  {
     const response = await apiClient.post("login/",

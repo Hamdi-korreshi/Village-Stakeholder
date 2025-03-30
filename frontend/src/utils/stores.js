@@ -12,7 +12,5 @@ export const store_user_info = defineStore('user', {
             this.user = null;
         },
     },
-    getters: {
-        is_auth: (state) => !!statusbar.user,
-    },
+    persist: true,
 } );

@@ -3,15 +3,15 @@
     <h2>Change Password</h2>
     <form @submit.prevent="handleChangePassword">
       <div class="form-group">
-        <label for="current-password">Current Password:</label>
+        <label for="current-pass">Current Password:</label>
         <input type="password" id="current-password" v-model="currentPassword" required />
       </div>
       <div class="form-group">
-        <label for="new-password">New Password:</label>
+        <label for="new-pass">New Password:</label>
         <input type="password" id="new-password" v-model="newPassword" required />
       </div>
       <div class="form-group">
-        <label for="confirm-password">Confirm New Password:</label>
+        <label for="confirm-pass">Confirm New Password:</label>
         <input type="password" id="confirm-password" v-model="confirmPassword" required />
       </div>
       <button type="submit">Change Password</button>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import {reset_password} from '../services/authServices.js';
 
 export default {
   name: "ChangePassword",
@@ -44,11 +44,11 @@ export default {
         return;
       }
       try {
-        const response = await axios.post("/api/change-password/", {
-          current_password: this.currentPassword,
-          new_password: this.newPassword,
-          confirm_password: this.confirmPassword
-        });
+        const response = await reset_password(
+          this.currentPassword,
+          this.newPassword,
+          this.confirmPassword
+        );
         this.message = response.data.detail || "Password updated successfully.";
       } catch (err) {
         this.error =
