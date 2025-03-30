@@ -15,6 +15,7 @@
         @click="handleSubmit"
         type="button"
         class="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors h-[39px]"
+        style="background-color: #4472C4"
       >
         Submit
       </button>
