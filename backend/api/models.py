@@ -83,7 +83,7 @@ class user_support_relation(models.Model):
         ("close_friend", "Close Friend"),
         ("mentor", "Mentor"),
     ]
-
+    
     user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supporters")
     supporter = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supported")
     support_role = models.CharField(max_length=50, choices=support_role_choices, null=False)

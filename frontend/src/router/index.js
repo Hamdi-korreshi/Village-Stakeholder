@@ -5,6 +5,7 @@ import RegisterPage from '../components/RegisterPage.vue'
 import TestAxios from '../components/TestAxios.vue'
 import ChangePassword from '../components/ChangePassword.vue'
 import { store_user_info } from "../utils/stores.js"
+import DeleteProfile from '../components/DeleteProfile.vue'
 
 const routes = [
     {
@@ -29,6 +30,12 @@ const routes = [
         name: 'Change-password',
         component: ChangePassword,
         meta: { requiresAuth: true }    
+    },
+    {
+        path: '/delete-profile',
+        name: 'Delete-profile',
+        component: DeleteProfile,
+        meta: { requiresAuth: true } 
     },
     {
         path: '/',

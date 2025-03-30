@@ -4,13 +4,15 @@
         <button @click="signoutUser">Sign Out</button>
         <RandomStringDisplay />
         <router-link to='/change-pass'>Change Password</router-link>
+        <div>
+        <router-link to='/delete-profile'>Delete Profile</router-link>
+        </div>
     </div>
 </template>
 
 <script>
     import { signout } from "../services/authServices"
     import RandomStringDisplay from "./RandomStringDisplay.vue"
-    import ChangePasswordVue from './ChangePassword.vue'
 
 export default {
     name: "Dashbaord",
