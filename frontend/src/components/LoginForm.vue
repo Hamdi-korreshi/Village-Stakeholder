@@ -17,7 +17,7 @@
 
 <script>
 import { signin } from "../services/authServices.js";
-
+console.log(import.meta.env.VITE_API_URL);
 export default {
   name: "LoginForm",
   data() {
@@ -31,7 +31,7 @@ export default {
     async signinUser() {
       try {
         const result = await signin(this.identifier, this.password);
-        if (result.message === "Login successful") {
+        if (result.message === "Login successful!") {
           // Optionally use result.random_value as needed.
           this.$emit("login-success");
         } else {
@@ -39,7 +39,7 @@ export default {
         }
       } catch (error) {
         this.errorMessage = "Login failed. Please check your credentials.";
-        console.error("Login error", error);
+        console.error("Login error for now", error);
       }
     },
   },

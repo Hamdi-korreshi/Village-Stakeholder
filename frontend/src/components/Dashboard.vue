@@ -3,12 +3,14 @@
         <h2>Dashboard</h2>
         <button @click="signoutUser">Sign Out</button>
         <RandomStringDisplay />
+        <router-link to='/change-pass'>Change Password</router-link>
     </div>
 </template>
 
 <script>
     import { signout } from "../services/authServices"
     import RandomStringDisplay from "./RandomStringDisplay.vue"
+    import ChangePasswordVue from './ChangePassword.vue'
 
 export default {
     name: "Dashbaord",
