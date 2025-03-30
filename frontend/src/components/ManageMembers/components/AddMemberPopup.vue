@@ -48,12 +48,14 @@
                 type="button"
                 class="px-4 py-2 text-white hover:bg-gray-100 rounded-lg transition-colors"
                 @click="$emit('update:modelValue', false)"
+                style="background-color: #ef4444;"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                style="background-color: #4472C4;"
               >
                 Add Member
               </button>

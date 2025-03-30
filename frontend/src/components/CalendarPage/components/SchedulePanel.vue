@@ -52,7 +52,7 @@
     <!-- Add Schedule Modal -->
     <div
       v-if="showAddModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      class="fixed inset-0 bg-gray-200 bg-opacity-70 flex items-center justify-center z-50"
       @click="showAddModal = false"
     >
       <div
@@ -61,12 +61,7 @@
       >
         <header class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-bold">Add Schedule Item</h2>
-          <button
-            @click="showAddModal = false"
-            class="text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            <span class="text-2xl">×</span>
-          </button>
+          
         </header>
 
         <form @submit.prevent="handleSubmitSchedule" class="space-y-4">
@@ -226,14 +221,16 @@
             <button
               type="button"
               @click="showAddModal = false"
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
+              class="px-4 py-2 text-sm font-medium text-white bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              style="background-color: #ef4444"
+              >
               Cancel
             </button>
             <button
               type="submit"
               class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
+              style="background-color: #4472C4;"
+              >
               Add Schedule
             </button>
           </div>
@@ -244,7 +241,7 @@
     <!-- Remove Schedule Modal -->
     <div
       v-if="showRemoveModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      class="fixed inset-0 bg-gray-200 bg-opacity-70 flex items-center justify-center z-50"
       @click="showRemoveModal = false"
     >
       <div
@@ -253,12 +250,7 @@
       >
         <header class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-bold">Remove Schedule Item</h2>
-          <button
-            @click="showRemoveModal = false"
-            class="text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            <span class="text-2xl">×</span>
-          </button>
+          
         </header>
 
         <form @submit.prevent="handleConfirmRemove" class="space-y-4">
@@ -360,15 +352,17 @@
             <button
               type="button"
               @click="showRemoveModal = false"
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
+              class="px-4 py-2 text-sm font-medium text-white bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              style="background-color: #ef4444"
+              >
               Cancel
             </button>
             <button
               type="submit"
               :disabled="!selectedEvent"
               class="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+              style="background-color: #4472C4;"
+              >
               Remove Event
             </button>
           </div>
