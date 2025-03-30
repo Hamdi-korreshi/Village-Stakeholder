@@ -8,12 +8,14 @@ import TutorialPage from '../components/TutorialPage/components/MainLayout.vue'
 import SettingsPage from '../components/SettingsPage/components/MainLayout.vue'
 import HomePage from '../components/HomePage/components/UserVillage.vue'
 import ManageMembersPage from '../components/ManageMembers/components/ManageMembers.vue'
+import ChangePassword from '../components/ChangePassword.vue'
+import { store_user_info } from "../utils/stores.js"
+
 const routes = [
     {
         path: '/login',
         name: 'Login',
-        component: LoginPage,
-        meta: { requiresGuest: true }
+        component: LoginPage
     },
     {
         path: '/calendar',
@@ -53,9 +55,10 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
-        path: '/test-axios',
-        name: 'TestAxios',
-        component: TestAxios,
+        path: '/change-pass',
+        name: 'Change-password',
+        component: ChangePassword,
+        meta: { requiresAuth: true }    
     },
     {
         path: '/',
@@ -68,16 +71,17 @@ const router = createRouter({
     routes
 })
 
-// router.beforeEach((to,form,next) => {
-//     const isLoggedIn = false;
-
-//     if (to.meta.requiresAuth && !isLoggedIn) {
-//         next({ name: 'Login' });
-//       } else if (to.meta.requiresGuest && isLoggedIn) {
-//         next({ name: 'Dashboard' });
-//       } else {
-//         next();
-//       }
-// });
+router.beforeEach((to, from, next) => {
+    const user_store = store_user_info();
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (!user_store.user) {
+        next({ name: 'Login' });
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
+  });
 
 export default router

@@ -1,43 +1,51 @@
-from .models import villager, Village ;
+from .models import villager, Village,user ;
+from django.http import JsonResponse;
+import sys
+############### Retrieving Village Data
 
 # Sends the json of the user's village participants 
-def personal_village_members(request, villager_id): 
-    owner_id= request.user.id # Gets the logged-in user's ID
-    
-    query = villager.objects.filter(owner_id = owner_id).select_related("user")
-    
-    response_data = [
-    {
-        "user_id": member.user.id,
 
-    }
-    for member in query
+
+def personal_village_members(request):
+    owner_id = request.user.id  # Gets the logged-in user's ID
+
+    # Get the village owned by the user
+    query = Village.objects.filter(owner=owner_id).prefetch_related("residents")
+
+    response_data = [
+        {"user_id": resident.id, "username": resident.username}  
+        for village in query
+        for resident in village.residents.all()  # Correctly access related residents
     ]
-    
-    return response_data
+
+    return JsonResponse(
+        {
+        "members": response_data
+        }
+    )
+
 
 # Sends the json of the villages the user is apart of
 def list_user_villages(request):
-    current_user = request.user  # Get the logged-in user
-
+    current_user = request.user.id  # Get the logged-in user
+    
     # Query villages where the user is a resident
     query = Village.objects.filter(residents=current_user)
 
     response_data = [
         {
-            "village_id": village.id,
             "owner": village.owner.username,
             "description": village.description
         }
         for village in query
     ]
     
-    return response_data
+    return JsonResponse({"villages": response_data})
 
 
 # Sends json of the village that a specific user is apart of (first response)
 def get_village_participants(request, village_id):
-    current_user = request.user  # Get the logged-in user
+    current_user = request.user.id  # Get the logged-in user
 
     village = Village.objects.filter(id=village_id, residents=current_user).first()
     
@@ -62,9 +70,133 @@ def get_village_participants(request, village_id):
             "owner_username": village.owner.username
         },
     }
-
+    
     
     # Add members to the response data
     response_data["members"] = members
 
     return response_data
+
+
+############### Managing Villagers
+
+# Adds/Invites a user to current user's village
+import json
+from django.http import JsonResponse
+from .models import user, Village, villager, user_support_relation
+
+def add_villager(request):
+    print("=== ADD VILLAGER ===",file=sys.stderr)
+    print("Logged-in user:", request.user,file=sys.stderr)
+    print("Villager username:", villager_username,file=sys.stderr)
+    print("Support role:", support_role,file=sys.stderr)
+    print("====================",file=sys.stderr)    
+    
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method. Only POST is allowed."}, status=405)
+
+
+    current_user = request.user.id
+    village = Village.objects.filter(owner=current_user).first()
+
+
+    if not village:
+        return JsonResponse({"error": "You do not own a village."}, status=400)
+
+    try:
+        body = json.loads(request.body)
+        villager_username = body.get("villager_username")
+        support_role = body.get("support_role")
+    except (json.JSONDecodeError, AttributeError):
+        return JsonResponse({"error": "Invalid request body."}, status=400)
+
+    if not villager_username or not support_role:
+        return JsonResponse({"error": "Username and support role are required."}, status=400)
+
+    villager_user = user.objects.filter(username=villager_username).first()
+    if not villager_user:
+        return JsonResponse({"error": "The specified user does not exist."}, status=404)
+
+
+
+    # Add to village residents
+    village.residents.add(villager_user)
+
+    # Create user support relation
+    relation = user_support_relation.objects.create(
+        user=current_user,
+        supporter=villager_user,
+        support_role=support_role
+    )
+
+    # Create villager connection
+    villager.objects.create(
+        user=current_user,
+        associate=villager_user,
+        relation=relation,
+        status="pending"
+    )
+
+    return JsonResponse({
+        "success": f"User {villager_user.username} added to your village with role {support_role}."
+    }, status=200)
+
+    
+# Removes a specific villager from the current user's village
+def remove_villager(request):
+        if request.method != "POST":
+            return JsonResponse({"error": "Invalid request method. Only POST is allowed."}, status=405)
+
+        current_user = request.user  # Get the logged-in user
+        village_id = request.POST.get("village_id")  # Get the village ID from the request
+        villager_id = request.POST.get("villager_id")  # Get the villager ID from the request
+
+        # Check if the village exists and the current user is the owner
+        village = Village.objects.filter(id=village_id, owner=current_user).first()
+        if not village:
+            return JsonResponse({"error": "You do not own this village or it does not exist."}, status=400)
+
+        # Check if the villager exists in the village
+        villager_to_remove = user.objects.filter(id=villager_id).first()
+        if not villager_to_remove or villager_to_remove not in village.residents.all():
+            return JsonResponse({"error": "The villager is not part of this village."}, status=404)
+
+        # Remove the villager from the village and save the changes
+        village.residents.remove(villager_to_remove)
+        village.save()
+
+        return JsonResponse({"success": f"Villager {villager_to_remove.username} has been removed from the village."}, status=200)
+    
+    
+from django.http import JsonResponse
+from .models import Village
+import json
+
+def initialize_village(request):
+    print("=== [INITIALIZE VILLAGE] ===",file=sys.stderr)
+    print("Request method:", request.method,file=sys.stderr)
+    print("Request user object:", request.user,file=sys.stderr)
+    print("Request user ID:", request.user.id, file=sys.stderr)
+    print("Raw request body:", request.body, file=sys.stderr)
+    print("User already has village?", hasattr(request.user, 'owned_village'), file=sys.stderr)
+    print("============================")
+
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+    user = request.user
+
+    if hasattr(user, 'owned_village'):
+        print(f"User {user.username} already owns a village.")
+        return JsonResponse({"error": "User already owns a village."}, status=400)
+
+    # Create the village
+    village = Village.objects.create(owner=user, description="Gamel's Village")
+
+    print(f"Village created successfully for user {user.username} (Village ID: {village.id})")
+
+    return JsonResponse({
+        "message": "Village created successfully.",
+        "village_id": village.id
+    }, status=201)
+

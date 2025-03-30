@@ -1,9 +1,11 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
-
+from django.conf import settings
 # Create your models here.
 
 class user(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField('email address', unique=True)
     profile_settings = models.JSONField(default=dict, null=True, blank=True)
     profile_picture = models.URLField(max_length=255, null=True, blank=True)
@@ -47,9 +49,9 @@ class villager(models.Model):
     relation = models.ForeignKey('user_support_relation', on_delete=models.CASCADE, related_name='villager_relation')
 
 class Village(models.Model):
-    owner = models.OneToOneField('user', on_delete=models.CASCADE, related_name='owned_village')
+    owner = models.OneToOneField("user", on_delete=models.CASCADE, related_name='owned_village')
     description = models.TextField(null=True, blank=True)
-    residents = models.ManyToManyField('user', related_name='village_members')
+    residents = models.ManyToManyField("user", related_name='village_members')
 
     def __str__(self):
         return f"Village owned by {self.owner.username}"
