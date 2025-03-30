@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="header">
     <header class="flex items-center px-20 py-5 w-full bg-gray-100 max-md:px-10 max-md:py-5 max-sm:flex-col max-sm:px-5 max-sm:py-5 max-sm:text-center">
       <div class="flex items-center text-xl font-bold text-blue-500 object-contain h-[84px] max-sm:mb-5">
         <img src="../assets/logo.png" alt="B the Cause Logo" class="h-20 mr-2" />
@@ -69,14 +69,4 @@ export default {
   name: "Header",
 };
 
-const app = createApp({
-  name: "Header",
-  components: {
-    Header: {
-      template: "#app",
-    },
-  },
-});
-
-app.mount("#app");
 </script>

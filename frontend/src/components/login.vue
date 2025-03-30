@@ -50,15 +50,16 @@ export default {
     async signinUser() {
       this.errorMessage = "";
       try {
-        const response = await signin(this.identifier, this.password);
+        const response = await signin(identifier.value, password.value);
         
         console.log("API Response:", response); // Debug log
         
         // Handle successful login
-        if (response.message === "Login successful") {
+        if (response.message === "Login successful!") {
           console.log("Redirecting to dashboard...");
-          toast.success("Login successful!", {
-            autoClose: 5000, // 5 seconds
+          this.$emit("login-success");
+          toast.success("Login Successful!", {
+              autoClose: 5000, // 5 seconds
           });
           setTimeout(() => {
             this.$router.push({ name: "Dashboard" });

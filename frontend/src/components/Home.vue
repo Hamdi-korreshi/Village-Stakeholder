@@ -71,7 +71,7 @@ export default {
     const signinUser = async () => {
       errorMessage.value = "";
       try {
-        const response = await signin(identifier.value, password.value);
+        const response = await signin(this.identifier, this.password);
         
         console.log("API Response:", response); // Debug log
         

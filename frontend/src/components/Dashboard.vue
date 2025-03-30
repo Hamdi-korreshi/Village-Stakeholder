@@ -64,7 +64,7 @@
       <!--<div class="random-string-section">
         <RandomStringDisplay />
       </div>-->
-        <router-link to='/change-pass'>Change Password</router-link>
+        <!--<router-link to='/change-pass'>Change Password</router-link>-->
     </div>
   </template>
   
@@ -73,10 +73,10 @@
   import RandomStringDisplay from "./RandomStringDisplay.vue";
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-    import ChangePasswordVue from './ChangePassword.vue'
+  import ChangePasswordVue from './ChangePassword.vue'
   
   export default {
-    name: "Dashboard",
+    name: "dashboard",
     components: { RandomStringDisplay },
     setup() {
       const router = useRouter();

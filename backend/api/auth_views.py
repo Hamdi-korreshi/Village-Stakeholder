@@ -20,10 +20,6 @@ def user_login(request):
         password = data.get('password')
 
         curr_user = authenticate(request, username=identifier, password=password)
-
-        if curr_user is not None:
-            login(request, curr_user)
-            return JsonResponse({"message": "Login successful"})
         if curr_user is not None:
             login(request, curr_user)
             return JsonResponse({
