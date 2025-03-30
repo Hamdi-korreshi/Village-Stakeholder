@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { initializeVillage } from "../services/villageServices.js"; // Import the service function
 
 export default {
-  name: 'MakeVillageButton',
+  name: "MakeVillageButton",
   props: {
     ownerId: {
       type: Number,
@@ -22,19 +22,16 @@ export default {
   methods: {
     async createVillage() {
       try {
-        const response = await axios.post('http://localhost:8000/village/v1/create-village/', {
-          owner: this.ownerId,
-          description: this.description
-        });
-        console.log('Village created successfully:', response.data);
-        alert('Village created!');
+        const response = await initializeVillage(this.ownerId, this.description);
+        console.log("Village created successfully:", response.data);
+        alert("Village created!");
       } catch (error) {
-        console.error('Error creating village:', error);
-        alert('Failed to create village.');
+        console.error("Error creating village:", error);
+        alert("Failed to create village.");
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>

@@ -5,43 +5,37 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { get_my_village } from "../services/authServices.js";
+import { addVillagerToVillage } from "../services/villageServices.js";
 
 export default {
-  name: 'AddVillagerButton',
+  name: "AddVillagerButton",
   props: {
     userId: {
       type: Number,
-      required: true
+      required: true,
     },
     associateId: {
       type: Number,
-      required: true
+      required: true,
     },
     relationId: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     async addVillager() {
       try {
-        const response = await axios.post('', {
-          user: this.userId,
-          associate: this.associateId,
-          relation: this.relationId,
-          status: 'pending'
-        });
-        console.log('Villager added successfully:', response.data);
-        alert('Villager added!');
+        const response = await addVillagerToVillage(this.userId, this.associateId, this.relationId);
+        console.log("Villager added successfully:", response);
+        alert("Villager added!");
       } catch (error) {
-        console.error('Error adding villager:', error);
-        alert('Failed to add villager.');
+        console.error("Error adding villager:", error);
+        alert("Failed to add villager.");
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
