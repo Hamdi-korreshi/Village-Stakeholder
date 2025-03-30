@@ -11,21 +11,31 @@
       the actual body, I'm just stretching it out so it's long and fills up a
       decent portion of the page.
     </p>
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleFormSubmit" class="w-full max-w-[482px]">
       <FormInput
         id="name"
         label="Enter your name:"
-        v-model="name"
-        :showSubmitButton="true"
-        @submit="handleNameSubmit"
+        v-model="formData.name"
+        :showSubmitButton="false"
+        :disabled="isSubmitting"
       />
       <FormInput
         id="villageName"
         label="What would you like to name your village?"
-        v-model="villageName"
-        :showSubmitButton="true"
-        @submit="handleVillageNameSubmit"
+        v-model="formData.villageName"
+        :showSubmitButton="false"
+        :disabled="isSubmitting"
       />
+      <button
+        type="submit"
+        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+        :disabled="isSubmitting"
+        style="background-color: #4472C4;"
+      >
+        Submit
+      </button>
+      <div v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</div>
+      <div v-if="success" class="text-green-500 text-sm mt-2">{{ success }}</div>
     </form>
   </section>
 </template>
@@ -40,24 +50,58 @@ export default {
   },
   data() {
     return {
-      name: "",
-      villageName: "",
+      formData: {
+        name: "",
+        villageName: "",
+      },
+      isSubmitting: false,
+      error: "",
+      success: "",
+      validationRules: {
+        name: (value) => value.length >= 2 || "Name must be at least 2 characters",
+        villageName: (value) =>
+          value.length >= 3 || "Village name must be at least 3 characters",
+      },
     };
   },
   methods: {
-    handleNameSubmit(value) {
-      console.log("Name submitted:", value);
-      // Handle name submission
+    validateField(fieldName, value) {
+      const rule = this.validationRules[fieldName];
+      if (rule) {
+        const result = rule(value);
+        if (typeof result === "string") {
+          this.error = result;
+          return false;
+        }
+      }
+      this.error = "";
+      return true;
     },
-    handleVillageNameSubmit(value) {
-      console.log("Village name submitted:", value);
-      // Handle village name submission
-    },
-    handleSubmit() {
-      console.log("Form submitted:", {
-        name: this.name,
-        villageName: this.villageName,
-      });
+    async handleFormSubmit() {
+      this.isSubmitting = true;
+      this.error = "";
+      this.success = "";
+
+      const isNameValid = this.validateField("name", this.formData.name);
+      const isVillageNameValid = this.validateField("villageName", this.formData.villageName);
+
+      if (!isNameValid || !isVillageNameValid) {
+        this.isSubmitting = false;
+        return;
+      }
+
+      try {
+        // Simulate form submission (e.g., API call)
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        this.success = "Welcome to your village, " + this.formData.name + "!";
+        this.formData.name = "";
+        this.formData.villageName = "";
+      } catch (err) {
+        this.error = "An error occurred while submitting the form.";
+      } finally {
+        this.isSubmitting = false;
+      }
     },
   },
 };
