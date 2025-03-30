@@ -6,7 +6,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-7 gap-1 w-full">
+    <div class="grid grid-cols-7 gap-1 w-full text-black">
       <CalendarCell
         v-for="day in calendarDays"
         :key="`${day.date}-${day.isCurrentMonth}`"

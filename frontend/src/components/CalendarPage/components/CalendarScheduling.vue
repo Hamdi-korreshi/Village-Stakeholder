@@ -1,6 +1,6 @@
 <template>
-  <main class="overflow-hidden bg-white">
-    <div class="pb-10 w-full bg-gray-100">
+  <main class="bg-white">
+    <div class="pb-10 min-w-screen min-h-screen bg-gray-100">
       <CalendarHeader />
 
       <div class="flex flex-col items-center px-14 mt-5 w-full max-md:px-5">

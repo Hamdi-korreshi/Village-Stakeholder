@@ -28,7 +28,7 @@
         type="button"
         @click="handleAddSchedule"
         class="flex justify-between items-center px-6 py-4 w-full h-[80px] bg-green-500 rounded-xl border border-solid border-black border-opacity-0 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] max-md:px-5 max-md:mr-0.5 hover:bg-green-600 transition-colors duration-200"
-      >
+        style="background-color: #22c55e">
         <span class="text-lg font-bold whitespace-nowrap"
           >Add a Schedule Item</span
         >
@@ -39,7 +39,7 @@
         type="button"
         @click="handleRemoveSchedule"
         class="flex justify-between items-center px-6 py-4 w-full h-[80px] bg-red-400 rounded-xl border border-solid border-black border-opacity-0 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] max-md:px-5 max-md:mr-0.5 hover:bg-red-500 transition-colors duration-200"
-      >
+        style="background-color: #ef4444;">
         <span class="text-lg font-bold whitespace-nowrap"
           >Remove a Schedule Item</span
         >
@@ -78,6 +78,7 @@ const handleRemoveSchedule = () => {
   // This event can be handled by parent components later
   console.log("Remove schedule clicked for date:", props.selectedDate);
 };
+
 </script>
 
 <style scoped>
