@@ -19,7 +19,7 @@ const routes = [
   { path: '/registration', 
     name: "Regstration",
     component: Registration, meta: { requiresGuest: true } },
-  { path: '/profile', component: Profile },
+  { path: '/profile', component: Profile, meta: { requiresAuth: true } },
   { path: '/passwordReset', component: PasswordReset },
   { path: '/emailVerification', component: EmailVerification },
   { path: '/calendar', component: Calendar, meta: { requiresAuth: true } },

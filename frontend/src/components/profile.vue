@@ -3,22 +3,25 @@
     <div class="profile-header">
       <h2>User Profile</h2>
       <button @click="toggleEditMode" class="edit-button">
-        {{ editMode ? 'Cancel' : 'Edit Profile' }}
+        {{ editMode ? 'Exit' : 'Edit Profile' }}
       </button>
     </div>
 
-    <div class="profile-content">
+    <div v-if="loading" class="loading-message">Loading profile...</div>
+    <div v-if="error" class="error-message">{{ error }}</div>
+
+    <div v-if="!loading && !error" class="profile-content">
       <!-- User Avatar Section -->
       <div class="avatar-section">
         <div class="avatar-container">
           <img 
-            :src="user.avatar || 'https://via.placeholder.com/150'" 
+            :src="user.profile_picture || 'https://via.placeholder.com/150'" 
             alt="Profile Picture" 
             class="avatar"
           />
-          <button v-if="editMode" class="avatar-upload-button" @click="triggerFileInput">
+          <!--<button v-if="editMode" class="avatar-upload-button" @click="triggerFileInput">
             Change Photo
-          </button>
+          </button>-->
           <input 
             type="file" 
             ref="fileInput" 
@@ -27,11 +30,21 @@
             style="display: none"
           />
         </div>
+        <div v-if="editMode" class="avatar-url-input">
+            <label for="profile_picture">Or enter URL:</label>
+            <input 
+              type="url" 
+              id="profile_picture" 
+              v-model="user.profile_picture" 
+              placeholder="Enter image URL"
+            />
+          </div>
+
       </div>
 
       <!-- User Details Section -->
       <div class="details-section">
-        <form @submit.prevent="saveProfile" class="profile-form">
+        <form @submit.prevent="handleUpdate" class="profile-form">
           <div class="form-group">
             <label for="username">Username</label>
             <input 
@@ -55,11 +68,11 @@
           </div>
 
           <div class="form-group">
-            <label for="fullName">Full Name</label>
+            <label for="full_name">Full Name</label>
             <input 
-              id="fullName" 
+              id="full_name" 
               type="text" 
-              v-model="user.fullName" 
+              v-model="user.full_name" 
               :disabled="!editMode"
             />
           </div>
@@ -76,6 +89,7 @@
 
           <!-- Only show password fields in edit mode -->
           <div v-if="editMode" class="password-section">
+            <!--<button type="button" @click="redirectToPassReset" class="edit-button">Password Reset</button>-->
             <h3>Change Password</h3>
             <div class="form-group">
               <label for="currentPassword">Current Password</label>
@@ -133,6 +147,8 @@
           <button @click="confirmDeletion" class="delete-account-button">
             Delete Account
           </button>
+          <p v-if="deleteMessage" class="message success">{{ deleteMessage }}</p>
+          <p v-if="deleteError" class="message error">{{ deleteError }}</p>
         </div>
       </div>
     </div>
@@ -143,20 +159,39 @@
       <div slot="body">
         <p>Are you sure you want to delete your account? This action cannot be undone.</p>
         <p>All your data will be permanently removed.</p>
+        <div class="confirmation-input">
+          <label for="confirmDelete">Type "DELETE" to confirm:</label>
+          <input 
+            id="confirmDelete" 
+            type="text" 
+            v-model="deleteConfirmation" 
+            placeholder="Type DELETE"
+          />
+        </div>
       </div>
       <div slot="footer">
-        <button @click="deleteAccount" class="confirm-delete-button">Delete Account</button>
+        <button 
+          @click="handleDelete" 
+          class="confirm-delete-button"
+          :disabled="deleteConfirmation !== 'DELETE'"
+        >
+          Delete Account
+        </button>
         <button @click="showDeleteModal = false" class="cancel-delete-button">Cancel</button>
       </div>
     </modal>
 
-    <p class="message">{{ message }}</p>
+    <p v-if="updateMessage" class="message success">{{ updateMessage }}</p>
+    <p v-if="updateError" class="message error">{{ updateError }}</p>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { get_profile, update_profile, delete_profile } from '../services/authServices.js';
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default {
   name: 'ProfilePage',
@@ -165,15 +200,21 @@ export default {
     const fileInput = ref(null);
     const editMode = ref(false);
     const showDeleteModal = ref(false);
-    const message = ref('');
+    const updateMessage = ref('');
+    const updateError = ref('');
+    const deleteMessage = ref('');
+    const deleteError = ref('');
+    const deleteConfirmation = ref('');
     const originalUserData = ref({});
+    const loading = ref(true);
+    const error = ref(null);
     
     const user = ref({
       username: '',
       email: '',
-      fullName: '',
+      full_name: '',
       bio: '',
-      avatar: ''
+      profile_picture: ''
     });
 
     const password = ref({
@@ -188,32 +229,30 @@ export default {
       twoFactorAuth: false
     });
 
-    // Fetch user data when component mounts
-    onMounted(async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        const response = await fetch('http://127.0.0.1:8000/api/user/profile', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+    const redirectToPassReset = () => {
+      router.push({ name: "passwordReset" });
+    };
 
-        if (response.ok) {
-          const data = await response.json();
-          user.value = data;
-          originalUserData.value = {...data};
-          
-          // Fetch settings if available
-          if (data.settings) {
-            settings.value = data.settings;
-          }
-        } else {
-          throw new Error('Failed to fetch user data');
+    // Fetch user data when component mounts
+    const fetchProfile = async () => {
+      try {
+        const data = await get_profile();
+        user.value = data;
+        originalUserData.value = {...data};
+        
+        // Fetch settings if available
+        if (data.profile_settings) {
+          settings.value = data.profile_settings;
         }
-      } catch (error) {
-        message.value = 'Error loading profile: ' + error.message;
+      } catch (err) {
+        error.value = err.response?.data?.error || "Failed to load profile.";
+        console.error("Error fetching profile:", err);
+      } finally {
+        loading.value = false;
       }
-    });
+    };
+
+    onMounted(fetchProfile);
 
     const toggleEditMode = () => {
       editMode.value = !editMode.value;
@@ -231,77 +270,96 @@ export default {
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          user.value.avatar = e.target.result;
+          user.value.profile_picture = e.target.result;
         };
         reader.readAsDataURL(file);
       }
     };
 
-    const saveProfile = async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        const response = await fetch('http://127.0.0.1:8000/api/user/profile', {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            ...user.value,
-            password: password.value.new ? password.value : null,
-            settings: settings.value
-          })
-        });
+    const handleUpdate = async () => {
+      updateMessage.value = '';
+      updateError.value = '';
+      
+      const payload = {
+        full_name: user.value.full_name,
+        email: user.value.email,
+        username: user.value.username,
+        profile_picture: user.value.profile_picture,
+        bio: user.value.bio,
+        profile_settings: settings.value
+      };
 
-        if (response.ok) {
-          const data = await response.json();
-          user.value = data;
-          originalUserData.value = {...data};
-          editMode.value = false;
-          message.value = 'Profile updated successfully!';
-          
-          // Clear password fields
-          password.value = { current: '', new: '', confirm: '' };
-          
-          // Hide message after 3 seconds
-          setTimeout(() => {
-            message.value = '';
-          }, 3000);
-        } else {
-          throw new Error('Failed to update profile');
-        }
-      } catch (error) {
-        message.value = 'Error updating profile: ' + error.message;
+      // Add password fields if they're being changed
+      if (password.value.new && password.value.new === password.value.confirm) {
+        payload.current_password = password.value.current;
+        payload.new_password = password.value.new;
+      }
+
+      try {
+        await update_profile(payload);
+        updateMessage.value = "Profile updated successfully!";
+        originalUserData.value = {...user.value};
+        
+        toast.success("Profile updated successfully!", {
+              autoClose: 5000, // 5 seconds
+          });
+        
+        // Clear password fields
+        password.value = { current: '', new: '', confirm: '' };
+        
+        // Hide message after 3 seconds
+        setTimeout(() => {
+          updateMessage.value = '';
+        }, 3000);
+
+        // Refresh profile data
+        await fetchProfile();
+      } catch (err) {
+        updateError.value = err.response?.data?.detail || "An error occurred updating your profile.";
+        console.error("Update profile error:", err);
+        toast.error("An error occurred updating your profile.", {
+              autoClose: 5000, // 5 seconds
+          });
       }
     };
 
     const resetForm = () => {
       user.value = {...originalUserData.value};
       password.value = { current: '', new: '', confirm: '' };
+      updateMessage.value = '';
+      updateError.value = '';
     };
 
     const confirmDeletion = () => {
       showDeleteModal.value = true;
+      deleteConfirmation.value = '';
+      deleteMessage.value = '';
+      deleteError.value = '';
     };
 
-    const deleteAccount = async () => {
+    const handleDelete = async () => {
+      deleteMessage.value = '';
+      deleteError.value = '';
+      
       try {
-        const token = localStorage.getItem('access_token');
-        const response = await fetch('http://127.0.0.1:8000/api/user/profile', {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const response = await delete_profile();
+        deleteMessage.value = response?.message || "Profile deleted successfully.";
+        toast.success("Profile deleted successfully. We are sorry to see you go :(", {
+              autoClose: 5000, // 5 seconds
         });
-
-        if (response.ok) {
+        // Clear user data and redirect after a short delay
+        
+        setTimeout(() => {
           localStorage.removeItem('access_token');
-          router.push('/login');
-        } else {
-          throw new Error('Failed to delete account');
-        }
-      } catch (error) {
-        message.value = 'Error deleting account: ' + error.message;
+          router.push({ name: 'login' });
+        }, 1500);
+      } catch (err) {
+        deleteError.value = err.response?.data?.detail || "An error occurred while deleting your profile.";
+        console.error("Delete profile error:", err);
+        toast.error("An error occurred while deleting your profile.", {
+              autoClose: 5000, // 5 seconds
+          });
+      } finally {
         showDeleteModal.value = false;
       }
     };
@@ -312,21 +370,75 @@ export default {
       settings,
       editMode,
       showDeleteModal,
-      message,
+      updateMessage,
+      updateError,
+      deleteMessage,
+      deleteError,
+      deleteConfirmation,
+      loading,
+      error,
       fileInput,
       toggleEditMode,
       triggerFileInput,
       handleAvatarUpload,
-      saveProfile,
+      handleUpdate,
       resetForm,
       confirmDeletion,
-      deleteAccount
+      handleDelete,
+      redirectToPassReset
     };
   }
 };
 </script>
 
 <style scoped>
+/* Add these new styles */
+.avatar-url-input {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.avatar-url-input label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.avatar-url-input input {
+  width: 100%;
+  padding: 0.6em;
+  border-radius: 8px;
+  border: 1px solid #4472C4;
+  background-color: #242424;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.confirmation-input {
+  margin-top: 1rem;
+}
+
+.confirmation-input label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.confirmation-input input {
+  width: 100%;
+  padding: 0.6em;
+  border-radius: 8px;
+  border: 1px solid #ff4444;
+  background-color: #242424;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.confirm-delete-button:disabled {
+  background-color: #5a5a5a;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Rest of your existing styles... */
 /* Overall layout */
 .profile-container {
   max-width: 1280px;
@@ -363,6 +475,18 @@ h4 {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 2rem;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  padding: 2rem;
 }
 
 /* Avatar Section */
@@ -505,6 +629,26 @@ button {
   border-color: #cc0000;
 }
 
+.confirm-delete-button {
+  background-color: #ff4444;
+  color: white;
+}
+
+.confirm-delete-button:hover:not(:disabled) {
+  background-color: #cc0000;
+  border-color: #cc0000;
+}
+
+.cancel-delete-button {
+  background-color: #3a3a3a;
+  color: rgba(255, 255, 255, 0.87);
+  margin-left: 1rem;
+}
+
+.cancel-delete-button:hover {
+  border-color: #4472C4;
+}
+
 .form-actions {
   display: flex;
   gap: 1rem;
@@ -564,6 +708,26 @@ button {
     background-color: #f9f9f9;
     color: #213547;
     border-color: #4472C4;
+  }
+
+  .avatar-url-input label {
+    color: #213547;
+  }
+
+  .avatar-url-input input {
+    background-color: #ffffff;
+    color: #213547;
+    border-color: #4472C4;
+  }
+
+  .confirmation-input label {
+    color: #213547;
+  }
+
+  .confirmation-input input {
+    background-color: #ffffff;
+    color: #213547;
+    border-color: #ff4444;
   }
 
   .details-section, .settings-section {

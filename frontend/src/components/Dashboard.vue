@@ -59,121 +59,35 @@
           </div>
         </div>
       </div>
-  
-      <!-- Random String Display -->
-      <!--<div class="random-string-section">
-        <RandomStringDisplay />
-      </div>-->
-        <!--<router-link to='/change-pass'>Change Password</router-link>-->
-    </div>
-  </template>
-  
-  <script>
-  import { signout } from "../services/authServices";
-  import RandomStringDisplay from "./RandomStringDisplay.vue";
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import ChangePasswordVue from './ChangePassword.vue'
-  
-  export default {
-    name: "dashboard",
-    components: { RandomStringDisplay },
-    setup() {
-      const router = useRouter();
-      
-      const notifications = ref([
-        { id: 1, title: 'System Update', message: 'New version 2.3.0 is available', time: '2 hours ago', type: 'info', read: false },
-        { id: 2, title: 'New User', message: 'John Doe has registered', time: '5 hours ago', type: 'info', read: true },
-        { id: 3, title: 'Alert', message: 'High traffic detected', time: '1 day ago', type: 'alert', read: false },
-        { id: 4, title: 'Maintenance', message: 'Scheduled maintenance tonight at 2 AM', time: '2 days ago', type: 'info', read: true }
-      ]);
-      
-      const users = ref([
-        { id: 1, username: 'admin', email: 'admin@example.com', role: 'admin' },
-        { id: 2, username: 'johndoe', email: 'john@example.com', role: 'user' },
-        { id: 3, username: 'janedoe', email: 'jane@example.com', role: 'editor' },
-        { id: 4, username: 'bobsmith', email: 'bob@example.com', role: 'user' }
-      ]);
-      
-      const showAddUserModal = ref(false);
-      const showDeleteModal = ref(false);
-      const userToDelete = ref(null);
-      
-      const newUser = ref({
-        username: '',
-        email: '',
-        password: '',
-        role: 'user'
-      });
-      
-      const signoutUser = async () => {
-        try {
-          const result = await signout();
-          console.log(result.message);
-          router.push({ name: "login" });
-        } catch (error) {
-          console.error("Sign out error", error);
+  </div>    
+</template>
+
+<script>
+    import { signout } from "../services/authServices"
+    import RandomStringDisplay from "./RandomStringDisplay.vue"
+    import { toast } from "vue3-toastify";
+    import "vue3-toastify/dist/index.css";
+
+export default {
+    name: "Dashbaord",
+    components: {RandomStringDisplay},
+    methods: {
+        async signoutUser() {
+            try {
+                const result = await signout();
+                console.log(result.message)
+                //this.$router.push({'name':"login"})
+                toast.success("Logout Success. Goodbye!", {
+                  autoClose: 5000, // 5 seconds
+                });
+                setTimeout(() => {
+                  this.$router.push({ name: "login" });
+                }, 2000);
+            }
+            catch (error) {
+                console.error("Sign out error", error);
+            }
         }
-      };
-      
-      const markAllAsRead = () => {
-        notifications.value = notifications.value.map(n => ({ ...n, read: true }));
-      };
-      
-      const dismissNotification = (index) => {
-        notifications.value.splice(index, 1);
-      };
-      
-      const addUser = () => {
-        const newId = Math.max(...users.value.map(u => u.id)) + 1;
-        users.value.push({
-          id: newId,
-          ...newUser.value
-        });
-        showAddUserModal.value = false;
-        resetNewUser();
-      };
-      
-      const resetNewUser = () => {
-        newUser.value = {
-          username: '',
-          email: '',
-          password: '',
-          role: 'user'
-        };
-      };
-      
-      const editUser = (user) => {
-        console.log('Edit user:', user);
-        // Implement edit functionality
-      };
-      
-      const confirmDeleteUser = (user) => {
-        userToDelete.value = user;
-        showDeleteModal.value = true;
-      };
-      
-      const deleteUser = () => {
-        users.value = users.value.filter(u => u.id !== userToDelete.value.id);
-        showDeleteModal.value = false;
-        userToDelete.value = null;
-      };
-      
-      return {
-        notifications,
-        users,
-        newUser,
-        showAddUserModal,
-        showDeleteModal,
-        userToDelete,
-        signoutUser,
-        markAllAsRead,
-        dismissNotification,
-        addUser,
-        editUser,
-        confirmDeleteUser,
-        deleteUser
-      };
     }
   };
   </script>
