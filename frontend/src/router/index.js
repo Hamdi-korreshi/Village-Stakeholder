@@ -1,14 +1,19 @@
 import { createRouter, createWebHistory } from "vue-router"
-import LoginPage from '../components/LoginPage.vue'
+import Home from '../components/Home.vue'
+import Login from '../components/login.vue'
 import Dashboard from '../components/Dashboard.vue'
-import RegisterPage from '../components/RegisterPage.vue'
+import Registration from '../components/registration.vue'
 import TestAxios from '../components/TestAxios.vue'
 import CalendarScheduling from '../components/CalendarPage/components/CalendarScheduling.vue'
+import Profile from '../components/profile.vue'
+import PasswordReset from "../components/passwordReset.vue"
 import TutorialPage from '../components/TutorialPage/components/MainLayout.vue'
+import EmailVerification from "../components/emailVerification.vue"
 import SettingsPage from '../components/SettingsPage/components/MainLayout.vue'
-import HomePage from '../components/HomePage/components/UserVillage.vue'
+import HomePage from '../components/Home.vue'
 import ManageMembersPage from '../components/ManageMembers/components/ManageMembers.vue'
 import ChangePassword from '../components/ChangePassword.vue'
+import Village from '../components/HomePage/components/UserVillage.vue'
 import { store_user_info } from "../utils/stores.js"
 import DeleteProfile from '../components/DeleteProfile.vue'
 
@@ -16,7 +21,7 @@ const routes = [
     {
         path: '/login',
         name: 'Login',
-        component: LoginPage
+        component: Login
     },
     {
         path: '/calendar',
@@ -34,19 +39,24 @@ const routes = [
         component: SettingsPage,
     },
     {
-        path: '/home',
-        name: 'Home',
-        component: HomePage,
-    },
-    {
         path: '/manage',
-        name: 'Manage Members',
+        name: 'ManageMembers',
         component: ManageMembersPage,
     },
     {
-        path: '/register',
-        name: 'Register',
-        component: RegisterPage,
+      path: '/passwordReset',
+      name: 'PasswordReset',
+      component: PasswordReset,
+    },
+    {
+      path: '/emailVerification',
+      name: 'EmailVerification',
+      component: EmailVerification,
+    },
+    {
+        path: '/registration',
+        name: 'Registration',
+        component: Registration,
         meta: { requiresGuest: true }
     },
     {
@@ -54,6 +64,18 @@ const routes = [
         name: 'Dashboard',
         component: Dashboard,
         meta: { requiresAuth: true }
+    },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/village',
+      name: 'Village',
+      component: Village,
+      meta: { requiresAuth: true }
     },
     {
         path: '/change-pass',
@@ -68,8 +90,9 @@ const routes = [
         meta: { requiresAuth: true } 
     },
     {
-        path: '/',
-        redirect: '/login'
+        path: '/Home',
+        name: 'Home', 
+        component: Home,
     }
 ]
 

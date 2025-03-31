@@ -7,22 +7,22 @@
 
       <div class="flex flex-col space-y-6">
         <div class="flex justify-between items-center gap-24">
-          <h3 class="text-xl">Setting Item</h3>
+          <h3 class="text-xl">Allow Notifications</h3>
           <ToggleSwitch v-model="settings.item1" />
         </div>
 
         <div class="flex justify-between items-center gap-24">
-          <h3 class="text-xl">Setting Item</h3>
+          <h3 class="text-xl">Allow Addition from Unknown Villagers</h3>
           <ToggleSwitch v-model="settings.item2" />
         </div>
 
         <div class="flex justify-between items-center gap-24">
-          <h3 class="text-xl">Setting Item</h3>
+          <h3 class="text-xl">Allow Image from Messages</h3>
           <ToggleSwitch v-model="settings.item3" />
         </div>
 
         <div class="flex justify-between items-center gap-24">
-          <h3 class="text-xl">Setting Item</h3>
+          <h3 class="text-xl">Notification</h3>
           <SelectDropdown v-model="settings.selectedItem">
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>

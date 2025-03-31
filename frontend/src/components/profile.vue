@@ -19,27 +19,16 @@
             alt="Profile Picture" 
             class="avatar"
           />
-          <!--<button v-if="editMode" class="avatar-upload-button" @click="triggerFileInput">
-            Change Photo
-          </button>-->
-          <input 
-            type="file" 
-            ref="fileInput" 
-            @change="handleAvatarUpload" 
-            accept="image/*" 
-            style="display: none"
-          />
         </div>
         <div v-if="editMode" class="avatar-url-input">
-            <label for="profile_picture">Or enter URL:</label>
-            <input 
-              type="url" 
-              id="profile_picture" 
-              v-model="user.profile_picture" 
-              placeholder="Enter image URL"
-            />
-          </div>
-
+          <label for="profile_picture">Image URL:</label>
+          <input 
+            type="url" 
+            id="profile_picture" 
+            v-model="user.profile_picture" 
+            placeholder="Enter image URL"
+          />
+        </div>
       </div>
 
       <!-- User Details Section -->
@@ -87,34 +76,11 @@
             ></textarea>
           </div>
 
-          <!-- Only show password fields in edit mode -->
+          <!-- Only show password change button in edit mode -->
           <div v-if="editMode" class="password-section">
-            <!--<button type="button" @click="redirectToPassReset" class="edit-button">Password Reset</button>-->
-            <h3>Change Password</h3>
-            <div class="form-group">
-              <label for="currentPassword">Current Password</label>
-              <input 
-                id="currentPassword" 
-                type="password" 
-                v-model="password.current"
-              />
-            </div>
-            <div class="form-group">
-              <label for="newPassword">New Password</label>
-              <input 
-                id="newPassword" 
-                type="password" 
-                v-model="password.new"
-              />
-            </div>
-            <div class="form-group">
-              <label for="confirmPassword">Confirm New Password</label>
-              <input 
-                id="confirmPassword" 
-                type="password" 
-                v-model="password.confirm"
-              />
-            </div>
+            <button type="button" @click="redirectToChangePassword" class="edit-button">
+              Change Password
+            </button>
           </div>
 
           <div v-if="editMode" class="form-actions">
@@ -127,20 +93,6 @@
       <!-- Settings Section -->
       <div class="settings-section">
         <h3>Account Settings</h3>
-        <div class="settings-options">
-          <div class="setting-item">
-            <span>Email Notifications</span>
-            <toggle-switch v-model="settings.emailNotifications" />
-          </div>
-          <div class="setting-item">
-            <span>Dark Mode</span>
-            <toggle-switch v-model="settings.darkMode" />
-          </div>
-          <div class="setting-item">
-            <span>Two-Factor Authentication</span>
-            <toggle-switch v-model="settings.twoFactorAuth" />
-          </div>
-        </div>
         
         <div class="danger-zone">
           <h4>Danger Zone</h4>
@@ -197,7 +149,6 @@ export default {
   name: 'ProfilePage',
   setup() {
     const router = useRouter();
-    const fileInput = ref(null);
     const editMode = ref(false);
     const showDeleteModal = ref(false);
     const updateMessage = ref('');
@@ -217,20 +168,8 @@ export default {
       profile_picture: ''
     });
 
-    const password = ref({
-      current: '',
-      new: '',
-      confirm: ''
-    });
-
-    const settings = ref({
-      emailNotifications: true,
-      darkMode: false,
-      twoFactorAuth: false
-    });
-
-    const redirectToPassReset = () => {
-      router.push({ name: "passwordReset" });
+    const redirectToChangePassword = () => {
+      router.push({ name: "PasswordReset" });
     };
 
     // Fetch user data when component mounts
@@ -239,11 +178,6 @@ export default {
         const data = await get_profile();
         user.value = data;
         originalUserData.value = {...data};
-        
-        // Fetch settings if available
-        if (data.profile_settings) {
-          settings.value = data.profile_settings;
-        }
       } catch (err) {
         error.value = err.response?.data?.error || "Failed to load profile.";
         console.error("Error fetching profile:", err);
@@ -261,21 +195,6 @@ export default {
       }
     };
 
-    const triggerFileInput = () => {
-      fileInput.value.click();
-    };
-
-    const handleAvatarUpload = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          user.value.profile_picture = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-
     const handleUpdate = async () => {
       updateMessage.value = '';
       updateError.value = '';
@@ -285,15 +204,8 @@ export default {
         email: user.value.email,
         username: user.value.username,
         profile_picture: user.value.profile_picture,
-        bio: user.value.bio,
-        profile_settings: settings.value
+        bio: user.value.bio
       };
-
-      // Add password fields if they're being changed
-      if (password.value.new && password.value.new === password.value.confirm) {
-        payload.current_password = password.value.current;
-        payload.new_password = password.value.new;
-      }
 
       try {
         await update_profile(payload);
@@ -301,31 +213,25 @@ export default {
         originalUserData.value = {...user.value};
         
         toast.success("Profile updated successfully!", {
-              autoClose: 5000, // 5 seconds
-          });
+          autoClose: 5000,
+        });
         
-        // Clear password fields
-        password.value = { current: '', new: '', confirm: '' };
-        
-        // Hide message after 3 seconds
         setTimeout(() => {
           updateMessage.value = '';
         }, 3000);
 
-        // Refresh profile data
         await fetchProfile();
       } catch (err) {
         updateError.value = err.response?.data?.detail || "An error occurred updating your profile.";
         console.error("Update profile error:", err);
         toast.error("An error occurred updating your profile.", {
-              autoClose: 5000, // 5 seconds
-          });
+          autoClose: 5000,
+        });
       }
     };
 
     const resetForm = () => {
       user.value = {...originalUserData.value};
-      password.value = { current: '', new: '', confirm: '' };
       updateMessage.value = '';
       updateError.value = '';
     };
@@ -345,20 +251,18 @@ export default {
         const response = await delete_profile();
         deleteMessage.value = response?.message || "Profile deleted successfully.";
         toast.success("Profile deleted successfully. We are sorry to see you go :(", {
-              autoClose: 5000, // 5 seconds
+          autoClose: 5000,
         });
-        // Clear user data and redirect after a short delay
         
         setTimeout(() => {
-          localStorage.removeItem('access_token');
           router.push({ name: 'login' });
-        }, 1500);
+        }, 2000);
       } catch (err) {
         deleteError.value = err.response?.data?.detail || "An error occurred while deleting your profile.";
         console.error("Delete profile error:", err);
         toast.error("An error occurred while deleting your profile.", {
-              autoClose: 5000, // 5 seconds
-          });
+          autoClose: 5000,
+        });
       } finally {
         showDeleteModal.value = false;
       }
@@ -366,8 +270,6 @@ export default {
 
     return {
       user,
-      password,
-      settings,
       editMode,
       showDeleteModal,
       updateMessage,
@@ -377,22 +279,19 @@ export default {
       deleteConfirmation,
       loading,
       error,
-      fileInput,
       toggleEditMode,
-      triggerFileInput,
-      handleAvatarUpload,
       handleUpdate,
       resetForm,
       confirmDeletion,
       handleDelete,
-      redirectToPassReset
+      redirectToChangePassword
     };
   }
 };
 </script>
 
 <style scoped>
-/* Add these new styles */
+/* Avatar URL Input */
 .avatar-url-input {
   margin-top: 1rem;
   width: 100%;
@@ -438,7 +337,6 @@ export default {
   opacity: 0.7;
 }
 
-/* Rest of your existing styles... */
 /* Overall layout */
 .profile-container {
   max-width: 1280px;
@@ -507,25 +405,6 @@ h4 {
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #4472C4;
-}
-
-.avatar-upload-button {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #1a1a1a;
-  color: rgba(255, 255, 255, 0.87);
-  border: 1px solid #4472C4;
-  padding: 0.5em 1em;
-  border-radius: 8px;
-  font-size: 0.9em;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-.avatar-upload-button:hover {
-  border-color: #4472C4;
 }
 
 /* Details Section */
@@ -701,12 +580,6 @@ button {
   }
 
   .avatar {
-    border-color: #4472C4;
-  }
-
-  .avatar-upload-button {
-    background-color: #f9f9f9;
-    color: #213547;
     border-color: #4472C4;
   }
 

@@ -102,6 +102,9 @@ export default {
           toast.success("Registration Successful", {
               autoClose: 5000, // 5 seconds
           });
+          setTimeout(() => {
+            router.push({ name: "login" });
+          }, 2000);
         } 
         else {
           this.errorMessage = result.error || "Registration failed.";

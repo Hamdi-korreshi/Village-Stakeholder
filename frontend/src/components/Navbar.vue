@@ -9,7 +9,7 @@
         <ul class="flex gap-11 justify-center max-sm:flex-col max-sm:gap-5 max-sm:items-center">
           <li>
             <router-link 
-              to="/" 
+              to="/Home" 
               class="text-xs cursor-pointer text-stone-500 hover:text-black hover:font-bold"
               active-class="text-blue-700 font-bold"
             >Home</router-link>
@@ -37,17 +37,10 @@
           </li>
           <li>
             <router-link 
-              to="/passwordReset" 
+              to="/Dashboard" 
               class="text-xs cursor-pointer text-stone-500 hover:text-black hover:font-bold"
               active-class="text-blue-700 font-bold"
-            >Reset Password</router-link>
-          </li>
-          <li>
-            <router-link 
-              to="/emailVerification" 
-              class="text-xs cursor-pointer text-stone-500 hover:text-black hover:font-bold"
-              active-class="text-blue-700 font-bold"
-            >Verify Email</router-link>
+            >Dashboard</router-link>
           </li>
           <li>
             <router-link 

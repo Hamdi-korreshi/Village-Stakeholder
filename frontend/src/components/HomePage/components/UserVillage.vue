@@ -21,7 +21,6 @@
   export default {
     name: "UserVillage",
     components: {
-      TheHeader,
       DashboardGrid,
     },
   };

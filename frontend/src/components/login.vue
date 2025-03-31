@@ -62,7 +62,7 @@ export default {
               autoClose: 5000, // 5 seconds
           });
           setTimeout(() => {
-            this.$router.push({ name: "Dashboard" });
+            this.$router.push({ name: "Tutorial" });
           }, 2000);
           return;
         }
