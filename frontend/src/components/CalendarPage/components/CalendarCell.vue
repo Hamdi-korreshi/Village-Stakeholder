@@ -16,8 +16,13 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { DayCell } from "./types";
 
+export interface DayCell {
+  date: number;
+  isCurrentMonth: boolean;
+  hasSchedule?: boolean;
+  scheduleType?: "blue" | "green" | "default";
+}
 const props = defineProps<{
   day: DayCell;
   isSelected?: boolean;

@@ -1,29 +1,76 @@
-// src/router/index.js
-import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../components/Home.vue';
-import Login from '../components/login.vue';
-import Registration from '../components/registration.vue';
-import Profile from '../components/profile.vue';
-import PasswordReset from '../components/passwordReset.vue';
-import EmailVerification from '../components/emailVerification.vue';
-import Calendar from '../components/CalendarPage/components/CalendarScheduling.vue';
-import Dashboard from '../components/Dashboard.vue';
-import { store_user_info } from "../utils/stores.js";
-
+import { createRouter, createWebHistory } from "vue-router"
+import LoginPage from '../components/LoginPage.vue'
+import Dashboard from '../components/Dashboard.vue'
+import RegisterPage from '../components/RegisterPage.vue'
+import TestAxios from '../components/TestAxios.vue'
+import CalendarScheduling from '../components/CalendarPage/components/CalendarScheduling.vue'
+import TutorialPage from '../components/TutorialPage/components/MainLayout.vue'
+import SettingsPage from '../components/SettingsPage/components/MainLayout.vue'
+import HomePage from '../components/HomePage/components/UserVillage.vue'
+import ManageMembersPage from '../components/ManageMembers/components/ManageMembers.vue'
+import ChangePassword from '../components/ChangePassword.vue'
+import { store_user_info } from "../utils/stores.js"
+import DeleteProfile from '../components/DeleteProfile.vue'
 
 const routes = [
-  { path: '/', 
-    name: "Home",
-    component: Home },
-  { path: '/login', name: 'login', component: Login },
-  { path: '/registration', 
-    name: "Regstration",
-    component: Registration, meta: { requiresGuest: true } },
-  { path: '/profile', component: Profile, meta: { requiresAuth: true } },
-  { path: '/passwordReset', component: PasswordReset },
-  { path: '/emailVerification', component: EmailVerification },
-  { path: '/calendar', component: Calendar, meta: { requiresAuth: true } },
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard, meta: { requiresAuth: true } },
+    {
+        path: '/login',
+        name: 'Login',
+        component: LoginPage
+    },
+    {
+        path: '/calendar',
+        name: 'Calendar',
+        component: CalendarScheduling,
+    },
+    {
+        path: '/tutorial',
+        name: 'Tutorial',
+        component: TutorialPage,
+    },
+    {
+        path: '/settings',
+        name: 'Settings',
+        component: SettingsPage,
+    },
+    {
+        path: '/home',
+        name: 'Home',
+        component: HomePage,
+    },
+    {
+        path: '/manage',
+        name: 'Manage Members',
+        component: ManageMembersPage,
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: RegisterPage,
+        meta: { requiresGuest: true }
+    },
+    {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: Dashboard,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/change-pass',
+        name: 'Change-password',
+        component: ChangePassword,
+        meta: { requiresAuth: true }    
+    },
+    {
+        path: '/delete-profile',
+        name: 'Delete-profile',
+        component: DeleteProfile,
+        meta: { requiresAuth: true } 
+    },
+    {
+        path: '/',
+        redirect: '/login'
+    }
 ]
 
 const router = createRouter({ 

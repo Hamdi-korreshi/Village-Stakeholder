@@ -3,8 +3,8 @@
     <div class="flex gap-5 max-md:flex-col items-center justify-center">
       <div class="w-[120px] flex-shrink-0 max-md:w-full">
         <img
-          src="../../../assets/logo.png"
-          alt="BtheCause"
+          src='../../../assets/logo.png'
+          alt='BtheCause'
           class="object-contain w-[90px] max-md:mt-10"
         />
       </div>
