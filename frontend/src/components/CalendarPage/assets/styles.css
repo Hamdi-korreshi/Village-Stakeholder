@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@theme {
+  --color-btc-green: #168809;
+}

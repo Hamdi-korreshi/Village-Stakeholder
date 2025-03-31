@@ -8,9 +8,12 @@ export const store_user_info = defineStore('user', {
         set_user(userData) {
             this.user = userData;
         },
+        get_user() {
+            return this.user;
+        },
         clear_user() {
             this.user = null;
         },
     },
     persist: true,
-} );
+});
