@@ -6,9 +6,7 @@
         Manage Members
       </h1>
 
-      <div
-        class="flex gap-8 justify-center max-md:flex-col max-md:items-center"
-      >
+      <div class="flex gap-8 justify-center max-md:flex-col max-md:items-center">
         <MembersList :members="members" />
 
         <aside
@@ -38,41 +36,64 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Header from "./Header.vue";
 import MembersList from "./MembersList.vue";
 import ActionButton from "./ActionButton.vue";
 import AddMemberPopup from "./AddMemberPopup.vue";
 import RemoveMemberPopup from "./RemoveMemberPopup.vue";
 
+import {
+  addVillagerToVillage,
+  removeVillagerFromVillage,
+  getPersonalVillageMembers,
+} from "../../../services/villageServices.js";
+
 const showAddMemberPopup = ref(false);
 const showRemoveMemberPopup = ref(false);
+const members = ref([]);
 
-const members = ref([
-  { id: 1, username: "member_1" },
-  { id: 2, username: "member_2" },
-  { id: 3, username: "member_3" },
-  // { id: 4, username: "member_4" },
-  // { id: 5, username: "member_5" },
-  // { id: 6, username: "member_6" },
-  // { id: 7, username: "member_7" },
-  // { id: 8, username: "member_8" },
-]);
+// Function to refresh members from backend
+const refreshMembers = async () => {
+  try {
+    const data = await getPersonalVillageMembers();
+    console.log("Refreshed members:", data);
+    members.value = data.members;
+  } catch (error) {
+    console.error("Failed to refresh members:", error);
+    alert("Unable to reload members. Please make sure you're logged in.");
+  }
+};
+
+// Load on mount
+onMounted(() => {
+  refreshMembers();
+});
 
 const handleAddMember = () => {
-  console.log("Opening add member popup"); // Debug log
+  console.log("Opening add member popup");
   showAddMemberPopup.value = true;
 };
 
-const addMember = (memberData) => {
-  members.value.push({
-    id: members.value.length + 1,
-    username: memberData.username,
-    role: memberData.role,
-  });
+const addMember = async (memberData) => {
+  try {
+    const response = await addVillagerToVillage(memberData.username, memberData.role);
+    console.log("Backend response:", response);
+    await refreshMembers(); // 🔁 Refresh after adding
+  } catch (err) {
+    console.error("Failed to add member:", err);
+    alert("Could not add member. Make sure the username is correct and you are logged in.");
+  }
 };
 
-const removeMember = (memberId) => {
-  members.value = members.value.filter((member) => member.id !== memberId);
+const removeMember = async (villagerUsername) => {
+  try {
+    const response = await removeVillagerFromVillage(villagerUsername);
+    console.log("Removed successfully:", response);
+    await refreshMembers(); // 🔁 Refresh after removing
+  } catch (error) {
+    console.error("Failed to remove member:", error);
+    alert("Failed to remove villager.");
+  }
 };
 </script>

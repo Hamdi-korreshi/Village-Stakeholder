@@ -13,12 +13,12 @@ urlpatterns = [ path('register/', register_user, name='register_user'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 
     # Villager management
-    path('create-village/', initialize_village, name='initialize_village'),
-    path('personal-village-members/', personal_village_members, name='personal_village_members'),
+    path('initialize-village/', initialize_village, name='initialize_village'),
+    path('get-village-members/', personal_village_members, name='personal_village_members'),
     path('list-user-villages/', list_user_villages, name='list_user_villages'),
     path('get-village-participants/<int:villager_id>/', get_village_participants, name='get_village_participants'), 
 # urls.py
     path('add-villager/', add_villager, name='add_villager'),
-    path('remove-village/<int:villager_id>/', remove_villager, name='remove_villager'),
+    path('remove-villager/', remove_villager, name='remove_villager'),
 
     ]

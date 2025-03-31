@@ -42,6 +42,7 @@
 
 <script>
 import FormInput from "./FormInput.vue";
+import { initializeVillage } from "../../../services/villageServices.js";
 
 export default {
   name: "WelcomeSection",
@@ -91,14 +92,16 @@ export default {
       }
 
       try {
-        // Simulate form submission (e.g., API call)
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const response = await initializeVillage(this.formData.villageName);
+        console.log("Village created:", response);
+        this.success = `Welcome to your village, ${this.formData.name}!`;
 
-        this.success = "Welcome to your village, " + this.formData.name + "!";
+        // Clear form
         this.formData.name = "";
         this.formData.villageName = "";
       } catch (err) {
-        this.error = "An error occurred while submitting the form.";
+        console.error("Error creating village:", err);
+        this.error = "An error occurred while creating your village.";
       } finally {
         this.isSubmitting = false;
       }
