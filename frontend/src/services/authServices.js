@@ -13,7 +13,9 @@ export const register = async (email, username, password) => {
     });
     return response.data;
 }
+
 export const reset_password = async (old_pass, new_pass, confirm_pass) => {
+
     const response = await apiClient.post("change-password/", {
         old_pass,
         new_pass,
@@ -49,4 +51,17 @@ export const signout = async () => {
         user_store.clear_user();
     }
     return response.data;
+
+}
+
+export const delete_profile = async () => {
+    const response = await apiClient.delete("delete-profile/");
+    if (response.data) {
+        await signout();
+    }
+    else {
+        console.log("Error: User account not deleted.")
+    }
+    return response.data
+
 }

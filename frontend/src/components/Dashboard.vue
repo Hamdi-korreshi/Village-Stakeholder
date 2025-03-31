@@ -1,30 +1,18 @@
 <template>
-  <div class="dashboard"> 
-    <h2>Dashboard</h2>
-    <button @click="signoutUser">Sign Out</button>
-
-    <!-- Add Villager Button Component -->
-    <AddVillagerButton 
-      :userId="currentUserId" 
-      :associateId="targetVillagerId" 
-      :relationId="selectedRelationId" 
-    />
-
-    <!-- Make Village Button Component -->
-    <MakeVillageButton 
-      :ownerId="currentUserId" 
-      description="Welcome to my village!" 
-    />
-
-    <RandomStringDisplay />
-  </div>
+    <div class="dashboard"> 
+        <h2>Dashboard</h2>
+        <button @click="signoutUser">Sign Out</button>
+        <RandomStringDisplay />
+        <router-link to='/change-pass'>Change Password</router-link>
+        <div>
+        <router-link to='/delete-profile'>Delete Profile</router-link>
+        </div>
+    </div>
 </template>
 
 <script>
-import { signout } from "../services/authServices"
-import RandomStringDisplay from "./RandomStringDisplay.vue"
-import AddVillagerButton from "./test_add_villager.vue"
-import MakeVillageButton from "./test_make_village.vue" 
+    import { signout } from "../services/authServices"
+    import RandomStringDisplay from "./RandomStringDisplay.vue"
 
 export default {
   name: "Dashboard",

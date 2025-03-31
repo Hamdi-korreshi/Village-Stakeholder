@@ -1,6 +1,7 @@
 from django.urls import path
-from .auth_views import get_csrf_token, user_login, user_logout
+
 from .managing_api import initialize_village, personal_village_members, list_user_villages, get_village_participants, add_villager, remove_villager
+from .auth_views import get_csrf_token, user_login, user_logout, delete_profile
 from .registration_view import register_user
 from .views import random_string
 from .pass_reset import ChangePasswordView
@@ -11,6 +12,7 @@ urlpatterns = [ path('register/', register_user, name='register_user'),
     path('logout/', user_logout, name='user_logout'),
     path('random-string/', random_string, name='random_string'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('delete-profile/', delete_profile, name='delete_profile'),
 
     # Villager management
     path('initialize-village/', initialize_village, name='initialize_village'),
@@ -20,5 +22,4 @@ urlpatterns = [ path('register/', register_user, name='register_user'),
 # urls.py
     path('add-villager/', add_villager, name='add_villager'),
     path('remove-villager/', remove_villager, name='remove_villager'),
-
     ]

@@ -150,7 +150,7 @@ Cookie: sessionid=COOKIE_STORED_IN_BROWSER
 ```
 
 ## Delete Profile
-Delete /village/v1/{random large string insert here}/deleteprofile
+Delete /village/v1/{random large string insert here}/delete_profile
 ```json
 Cookie: sessionid=COOKIE_STORED_IN_BROWSER
 ```
