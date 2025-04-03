@@ -4,7 +4,7 @@
       @change="$emit('update:modelValue', $event.target.value)"
       class="text-base font-light shadow-sm bg-zinc-300 h-[29px] w-[156px] px-2 rounded"
     >
-      <option disabled value="">Select Item</option>
+      <option disabled value="">Do Not Disturb</option>
       <slot></slot>
     </select>
   </template>

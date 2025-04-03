@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import CalendarHeader from "./CalendarHeader.vue";
+//import CalendarHeader from "./CalendarHeader.vue";
 import CalendarGrid from "./CalendarGrid.vue";
 import SchedulePanel from "./SchedulePanel.vue";
 

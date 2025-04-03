@@ -7,6 +7,8 @@ from django.conf import settings
 class user(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField('email address', unique=True)
+    full_name = models.CharField(max_length=255, null=True, blank=True) 
+    bio = models.TextField(null=True, blank=True)
     profile_settings = models.JSONField(default=dict, null=True, blank=True)
     profile_picture = models.URLField(max_length=255, null=True, blank=True)
     groups = models.ManyToManyField(Group, related_name="api_users_groups", blank=True)

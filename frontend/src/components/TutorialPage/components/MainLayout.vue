@@ -6,13 +6,13 @@
   </template>
   
   <script>
-  import Header from "./Header.vue";
+  //import Header from "./Header.vue";
   import WelcomeSection from "./WelcomeSection.vue";
   
   export default {
     name: "MainLayout",
     components: {
-      Header,
+      //Header,
       WelcomeSection,
     },
   };

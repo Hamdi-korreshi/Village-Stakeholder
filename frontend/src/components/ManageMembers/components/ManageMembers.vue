@@ -37,7 +37,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import Header from "./Header.vue";
+//import Header from "./Header.vue";
 import MembersList from "./MembersList.vue";
 import ActionButton from "./ActionButton.vue";
 import AddMemberPopup from "./AddMemberPopup.vue";

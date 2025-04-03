@@ -24,7 +24,6 @@ def user_login(request):
         password = data.get('password')
 
         curr_user = authenticate(request, username=identifier, password=password)
-
         if curr_user is not None:
             login(request, curr_user)
             return JsonResponse({
@@ -59,3 +58,51 @@ def delete_profile(request):
     except Exception as e:
         print("Error happening:", e, file=sys.stderr)
         return JsonResponse({"error": "User not found"}, status=404)
+
+def update_profile(request):
+    try:
+        data = json.loads(request.body)
+        
+        user = request.user
+        
+        if 'email' not in data or 'username' not in data or 'full_name' not in data:
+            return JsonResponse({"error": "Missing required fields"}, status=400)
+        
+        if "full_name" in data:
+            user.full_name = data["full_name"]
+        if "email" in data:
+            user.email = data["email"]
+        if "username" in data:
+            user.username = data["username"]
+        if "profile_picture" in data:
+            user.profile_picture = data["profile_picture"]
+        # for future sprint TODO
+        # if "profile_settings" in data:
+        #     user.profile_settings = data["profile_settings"]
+        if "bio" in data:
+            user.bio = data["bio"]
+
+        user.save()
+
+        return JsonResponse({"message": "Profile updated successfully"}, status=200)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+@login_required
+@require_http_methods(["GET"])
+def get_profile(request):
+    print("APIT HIT", file=sys.stderr)
+    try:
+        user = request.user
+        data = {
+            "username": user.username,
+            "email": user.email,
+            "full_name": getattr(user, "full_name", ""),
+            "bio": getattr(user, "bio", ""),             
+            "profile_picture": getattr(user, "profile_picture", ""),
+        }
+        return JsonResponse(data, status=200)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)

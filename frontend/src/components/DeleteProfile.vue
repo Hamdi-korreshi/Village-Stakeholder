@@ -8,7 +8,7 @@
 
 <script>
 import { delete_profile } from '../services/authServices.js';
-
+// bait
 export default {
   name: "DeleteProfile",
   data() {

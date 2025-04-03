@@ -65,3 +65,14 @@ export const delete_profile = async () => {
     return response.data
 
 }
+
+export const update_profile = async (payload) => {
+    const response = await apiClient.put ('update-profile/', payload);
+    return response.data;
+}
+
+export const get_profile = async () => {
+    const response = await apiClient.get('get-profile/')
+    console.log(response.data)
+    return response.data;
+}
