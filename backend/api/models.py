@@ -49,6 +49,8 @@ class villager(models.Model):
         ("blocked", "Blocked")
     ], null=False)
     relation = models.ForeignKey('user_support_relation', on_delete=models.CASCADE, related_name='villager_relation')
+    approve_by = models.ForeignKey('user', on_delete=models.SET_NULL, null=True,blank=True,related_name='approved_villagers')
+    approved_at = models.DateTimeField(null=True, blank=True)
 
 class Village(models.Model):
     owner = models.OneToOneField("user", on_delete=models.CASCADE, related_name='owned_village')

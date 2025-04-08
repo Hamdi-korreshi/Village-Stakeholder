@@ -93,7 +93,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import user, Village, villager, user_support_relation
 
-@csrf_exempt  # Remove this once you add real frontend auth
 def add_villager(request):
     print("\n=== [ADD VILLAGER INITIATED] ===", file=sys.stderr)
 
@@ -139,31 +138,44 @@ def add_villager(request):
         return JsonResponse({"error": "The specified user does not exist."}, status=404)
     print("Villager user ID:", villager_user.id, file=sys.stderr)
 
-    # Add to village
-    village.residents.add(villager_user)
-    print("Added to village residents", file=sys.stderr)
-
-    # Create support relation
+    # modified to add temp stop of adding person here
     relation = user_support_relation.objects.create(
         user=current_user,
         supporter=villager_user,
         support_role=support_role
     )
-    print("Support relation created (ID:", relation.id, ")", file=sys.stderr)
+    print("Created support relation with ID:", relation.id, file=sys.stderr)
 
-    # Create villager instance
-    villager_instance = villager.objects.create(
+    pending_villager = villager.objects.create(
         user=current_user,
         associate=villager_user,
         relation=relation,
-        status="pending"
     )
-    print("Villager relationship created (ID:", villager_instance.connection_id, ")", file=sys.stderr)
+    # # Add to village
+    # village.residents.add(villager_user)
+    # print("Added to village residents", file=sys.stderr)
 
-    print("=== [ADD VILLAGER COMPLETE] ===\n", file=sys.stderr)
-    return JsonResponse({
-        "success": f"User {villager_user.username} added to your village with role {support_role}."
-    }, status=200)
+    # # Create support relation
+    # relation = user_support_relation.objects.create(
+    #     user=current_user,
+    #     supporter=villager_user,
+    #     support_role=support_role
+    # )
+    # print("Support relation created (ID:", relation.id, ")", file=sys.stderr)
+
+    # # Create villager instance
+    # villager_instance = villager.objects.create(
+    #     user=current_user,
+    #     associate=villager_user,
+    #     relation=relation,
+    #     status="pending"
+    # )
+    # print("Villager relationship created (ID:", villager_instance.connection_id, ")", file=sys.stderr)
+
+    # print("=== [ADD VILLAGER COMPLETE] ===\n", file=sys.stderr)
+    # return JsonResponse({
+    #     "success": f"User {villager_user.username} added to your village with role {support_role}."
+    # }, status=200)
 
     
 # Removes a specific villager from the current user's village
