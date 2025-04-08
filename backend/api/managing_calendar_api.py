@@ -32,10 +32,8 @@ PLANNED INTERACTIONS / EXTENSIONS:
 """
 
 import json 
-from api.models import calendar_event, calendar_invite, user
-
+from api.models import calendar_event, calendar_invite, user, notification
 from django.http import JsonResponse
-from api.models import notification
 
 
 def get_notification(request):
