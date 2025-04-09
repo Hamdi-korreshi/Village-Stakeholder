@@ -139,18 +139,27 @@ def add_villager(request):
     print("Villager user ID:", villager_user.id, file=sys.stderr)
 
     # modified to add temp stop of adding person here
-    relation = user_support_relation.objects.create(
+    new_relation = user_support_relation.objects.create(
         user=current_user,
         supporter=villager_user,
         support_role=support_role
     )
-    print("Created support relation with ID:", relation.id, file=sys.stderr)
+    print("Created support relation with ID:", new_relation.id, file=sys.stderr)
 
     pending_villager = villager.objects.create(
         user=current_user,
         associate=villager_user,
-        relation=relation,
+        relation=new_relation,
+        status="pending"
     )
+    print("Created incomplete needs notificaiton with connection ID: ",  pending_villager.connection_id, file=sys.stderr)
+
+    # todo: add notifcaiton and check for guardian
+    
+
+    return JsonResponse({
+        "success": f"Join request for user {villager_user.username} submitted. Awaiting guardian approval."
+    }, status=200)
     # # Add to village
     # village.residents.add(villager_user)
     # print("Added to village residents", file=sys.stderr)

@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 # Create your models here.
 
@@ -36,8 +37,24 @@ class notification(models.Model):
     notification_id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_notifications")
     event = models.ForeignKey(calendar_event, on_delete=models.CASCADE, null=True, blank=True, related_name="event_notifications")
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    object_id = models.PositiveBigIntegerField(null=True, blank=True)
     message = models.TextField(null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=[
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("blocked", "Blocked")
+        ], null=False)
+
+class notification_history(models.Model):
+    history_id = models.BigAutoField(primary_key=True)
+    notification = models.ForeignKey(notification, on_delete=models.CASCADE, related_name="history")
+    old_status = models.CharField(max_length=20)
+    new_status = models.CharField(max_length=20)
+    message = models.TextField(null=False)
+    changed_at = models.DateTimeField(auto_now_add=True)
+    changed_by = models.ForeignKey("user", on_delete=models.SET_NULL, null=True, blank=True)
 
 class villager(models.Model):
     connection_id = models.BigAutoField(primary_key=True)
