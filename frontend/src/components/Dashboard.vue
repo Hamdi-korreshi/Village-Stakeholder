@@ -38,31 +38,7 @@
       </div>
 
       <!-- Notifications Section -->
-      <div class="notifications-section">
-        <div class="notifications-header">
-          <h3>Notifications</h3>
-          <button @click="markAllAsRead" class="mark-read-button">Mark All as Read</button>
-        </div>
-        
-        <div class="notifications-list">
-          <div v-for="(notification, index) in notifications" :key="index" 
-               class="notification-item" 
-               :class="{ 'unread': !notification.read }">
-            <div class="notification-icon">
-              <span v-if="notification.type === 'alert'">⚠️</span>
-              <span v-else-if="notification.type === 'info'">ℹ️</span>
-              <span v-else>🔔</span>
-            </div>
-            <div class="notification-content">
-              <div class="notification-title">{{ notification.title }}</div>
-              <div class="notification-message">{{ notification.message }}</div>
-              <div class="notification-time">{{ notification.time }}</div>
-            </div>
-            <button @click="dismissNotification(index)" class="dismiss-button">×</button>
-          </div>
-        </div>
-      </div>
-
+      <Notifications />
       <!-- User Management Section -->
       <div class="user-management-section">
         <div class="management-header">
@@ -148,19 +124,13 @@ import { signout } from "../services/authServices";
 import RandomStringDisplay from "./RandomStringDisplay.vue";
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import Notifications from './NotificationsTest.vue'
 
 export default {
   name: "Dashboard",
-  components: { RandomStringDisplay },
+  components: { Notifications, RandomStringDisplay },
   setup() {
     const router = useRouter();
-    
-    const notifications = ref([
-      { id: 1, title: 'System Update', message: 'New version 2.3.0 is available', time: '2 hours ago', type: 'info', read: false },
-      { id: 2, title: 'New User', message: 'John Doe has registered', time: '5 hours ago', type: 'info', read: true },
-      { id: 3, title: 'Alert', message: 'High traffic detected', time: '1 day ago', type: 'alert', read: false },
-      { id: 4, title: 'Maintenance', message: 'Scheduled maintenance tonight at 2 AM', time: '2 days ago', type: 'info', read: true }
-    ]);
     
     const users = ref([
       { id: 1, username: 'admin', email: 'admin@example.com', role: 'admin' },
@@ -197,14 +167,7 @@ export default {
     const goToVillage = () => {
       router.push({ name: "Village" });
     };
-    
-    const markAllAsRead = () => {
-      notifications.value = notifications.value.map(n => ({ ...n, read: true }));
-    };
-    
-    const dismissNotification = (index) => {
-      notifications.value.splice(index, 1);
-    };
+  
     
     const addUser = () => {
       const newId = Math.max(...users.value.map(u => u.id)) + 1;
@@ -242,7 +205,6 @@ export default {
     };
     
     return {
-      notifications,
       users,
       newUser,
       showAddUserModal,
@@ -251,8 +213,6 @@ export default {
       signoutUser,
       goToSettings,
       goToVillage,
-      markAllAsRead,
-      dismissNotification,
       addUser,
       editUser,
       confirmDeleteUser,

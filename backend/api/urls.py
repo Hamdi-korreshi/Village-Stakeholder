@@ -1,6 +1,8 @@
 from django.urls import path
 
-from .managing_api import initialize_village, personal_village_members, list_user_villages, get_village_participants, add_villager, remove_villager
+from .managing_api import initialize_village, personal_village_members, list_user_villages, get_village_participants
+from .managing_api import add_villager, remove_villager, guardian_approval, decision_village_invite
+from .notifs import get_notifs
 from .auth_views import get_csrf_token, user_login, user_logout, delete_profile, update_profile, get_profile
 from .registration_view import register_user
 from .views import random_string
@@ -24,4 +26,7 @@ urlpatterns = [ path('register/', register_user, name='register_user'),
 # urls.py
     path('add-villager/', add_villager, name='add_villager'),
     path('remove-villager/', remove_villager, name='remove_villager'),
+    path('decision_village_invite/', decision_village_invite, name='decision_village_invite'),
+    path('guardian_approval/', guardian_approval, name='guardian_approval'),
+    path('get_notifs/', get_notifs, name='get_notifs'),
     ]

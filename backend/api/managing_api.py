@@ -1,6 +1,10 @@
-from .models import villager, Village,user ;
-from django.http import JsonResponse;
+import json
 import sys
+from django.http import JsonResponse
+from .models import user, Village, villager, user_support_relation, JoinRequest, NotificationHistory
+from .models import Notification as notification
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
 ############### Retrieving Village Data
 
 # Sends the json of the user's village participants 
@@ -79,30 +83,14 @@ def get_village_participants(request, village_id):
 
     return response_data
 
-
-############### Managing Villagers
-
-# Adds/Invites a user to current user's village
-import json
-from django.http import JsonResponse
-from .models import user, Village, villager, user_support_relation
-
-import json
-import sys
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import user, Village, villager, user_support_relation
-
 def add_villager(request):
     print("\n=== [ADD VILLAGER INITIATED] ===", file=sys.stderr)
 
-    # Check method
     print("Request method:", request.method, file=sys.stderr)
     if request.method != "POST":
         print("[ERROR] Invalid request method", file=sys.stderr)
         return JsonResponse({"error": "Invalid request method. Only POST is allowed."}, status=405)
 
-    # Parse JSON body
     try:
         body = json.loads(request.body)
         villager_username = body.get("villager_username")
@@ -114,52 +102,163 @@ def add_villager(request):
         print("[ERROR] Failed to parse request body:", str(e), file=sys.stderr)
         return JsonResponse({"error": "Invalid request body."}, status=400)
 
-    # Ensure required fields are present
     if not villager_username or not support_role:
         print("[ERROR] Missing username or support role", file=sys.stderr)
         return JsonResponse({"error": "Username and support role are required."}, status=400)
 
-    # Get current logged-in user
     current_user = request.user
     print("Logged-in user object:", current_user, file=sys.stderr)
     print("Logged-in user ID:", current_user.id if hasattr(current_user, "id") else "No ID", file=sys.stderr)
 
-    # Check if user owns a village
     village = Village.objects.filter(owner=current_user).first()
     if not village:
         print("[ERROR] No village found for user", file=sys.stderr)
         return JsonResponse({"error": "You do not own a village."}, status=400)
     print("Village found:", village.id, file=sys.stderr)
 
-    # Check if villager user exists
     villager_user = user.objects.filter(username=villager_username).first()
     if not villager_user:
         print("[ERROR] Villager username does not exist:", villager_username, file=sys.stderr)
         return JsonResponse({"error": "The specified user does not exist."}, status=404)
     print("Villager user ID:", villager_user.id, file=sys.stderr)
 
-    # modified to add temp stop of adding person here
-    new_relation = user_support_relation.objects.create(
-        user=current_user,
-        supporter=villager_user,
+    # got rid of the old pending to use JoinRequest when handling the guardian flow, sorry rodney
+
+    join_request = JoinRequest.objects.create(
+        requester=current_user,
+        target=villager_user,
+        village=village,
         support_role=support_role
     )
-    print("Created support relation with ID:", new_relation.id, file=sys.stderr)
-
-    pending_villager = villager.objects.create(
-        user=current_user,
-        associate=villager_user,
-        relation=new_relation,
-        status="pending"
-    )
-    print("Created incomplete needs notificaiton with connection ID: ",  pending_villager.connection_id, file=sys.stderr)
+    print("Created JoinRequest record with ID:", join_request.id, file=sys.stderr)
 
     # todo: add notifcaiton and check for guardian
-    
+    guardian = user_support_relation.object.filter(supporter=villager_username, support_role="Guardian")
 
-    return JsonResponse({
-        "success": f"Join request for user {villager_user.username} submitted. Awaiting guardian approval."
-    }, status=200)
+    if not guardian.exists():
+        join_request.approval_status = "approved"
+        join_request.save()
+        join_content = ContentType.objects.get_for_model(JoinRequest)
+        notif = notification.objects.create(
+            user=villager_user,
+            content_type=join_content,
+            object_id=join_request.id,
+            message=f"{current_user.username} inviting you to join {village}",
+            status="approve"
+        )
+
+        NotificationHistory.objects.create(
+            notification=notif,
+            old_status="waiting",
+            new_status="approved",
+            message=notif.message,
+            changed_by=current_user
+        )
+        return JsonResponse({'success': f"{current_user.username} has been invited to join {village}"}, status=200)
+    else:
+        # need to fix later assume one guardian
+        join_content = ContentType.objects.get_for_model(JoinRequest)
+        notif = notification.objects.create(
+            user=guardian,
+            content_type=join_content,
+            object_id=join_request.id,
+            message=f"{current_user.usernamee} is pending your approval to {village}",
+            status="waiting"
+        )
+        NotificationHistory.objects.create(
+            notification=notif,
+            old_status="no gaurdian", 
+            new_status="waiting",
+            message=notif.message,
+            changed_by=current_user
+        )
+        return JsonResponse({'success': f"Guardian notified for {villager_username}"}, status=200)
+    
+def guardian_approval(request, join_request_id):
+    if request.method != "PATCH":
+        return JsonResponse({"error": "Invalid request method. Only PATCH is allowed"}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        action = data.get("action")
+    except (json.JSONDecodeError, AttributeError):
+        return JsonResponse({"error": "Invalid request body."}, status=400)
+    
+    if action not in ['approve', 'deny']:
+        return JsonResponse({"error": "Invalid action. Must be 'approve', or 'deny"}, status=400)
+    
+    join_request = get_object_or_404(JoinRequest, id=join_request_id)
+    old_status = join_request.approval_status
+
+    if action == "approve":
+        join_request.approval_status = 'approved'
+    elif action == "deny":
+        join_request.approval_status = 'blocked'
+    
+    join_request.save()
+    join_content = ContentType.objects.get_for_model(JoinRequest)
+    if join_request.approval_status == "approved":
+        notif = notification.objects.create(
+            user=join_request.target,
+            content_type=join_content,
+            object_id=join_request.id,
+            message=f"Your join request for {join_request.village} has been approved. Please accept the invitation.",
+            status="approved"
+        )
+    else:
+        notif = notification.objects.create(
+            user=join_request.requester,
+            content_type=join_content,
+            object_id=join_request.id,
+            message=f"Your join request for {join_request.target.username} in {join_request.village} has been rejected.",
+            status="rejected"
+        )
+    
+    NotificationHistory.objects.create(
+        notification=notif,
+        old_status=old_status,
+        new_status=join_request.approval_status,
+        message=notif.message,
+        changed_by=request.user
+    )
+
+    return JsonResponse({"success": f"Join request has been {join_request.approval_status}."}, status=200)
+
+def decision_village_invite(request, join_request_id):
+    if request.method != "PATCH":
+        return JsonResponse({"error": "Invalid request method. Only PATCH is allowed"}, status=405)
+    
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, AttributeError):
+        return JsonResponse({"error": "Invalid request body."}, status=400)
+    
+    join_request = get_object_or_404(JoinRequest, id=join_request_id)
+
+    if join_request.approval_status != "approved":
+        return JsonResponse({"error": "Join request has not been approved yet."}, status=400)
+    
+    village = join_request.village
+    village.residents.add(join_request.target)
+    
+    join_content = ContentType.objects.get_for_model(JoinRequest)
+    notif = notification.objects.create(
+        user=join_request.target,
+        content_type=join_content,
+        object_id=join_request.id,
+        message=f"You have accepted the invitation to join {village}.",
+        status="accepted"
+    )
+
+    NotificationHistory.objects.create(
+        notification=notif,
+        old_status="approved",
+        new_status="accepted",
+        message=notif.message,
+        changed_by=join_request.target  # The invitee is accepting.
+    )
+    return JsonResponse({"success": f"You have accepted the invitation to join {village}."}, status=200)
+
     # # Add to village
     # village.residents.add(villager_user)
     # print("Added to village residents", file=sys.stderr)
@@ -186,12 +285,6 @@ def add_villager(request):
     #     "success": f"User {villager_user.username} added to your village with role {support_role}."
     # }, status=200)
 
-    
-# Removes a specific villager from the current user's village
-import json
-import sys
-from django.http import JsonResponse
-from .models import Village, user, user_support_relation, villager
 
 def remove_villager(request):
     if request.method != "POST":
@@ -223,15 +316,6 @@ def remove_villager(request):
     villager.objects.filter(user=current_user, associate=villager_user).delete()
 
     return JsonResponse({"success": f"{villager_username} removed from your village."}, status=200)
- 
-from django.http import JsonResponse
-from .models import Village
-import json
-
-import sys
-import json
-from django.http import JsonResponse
-from .models import Village  # Make sure this is imported correctly
 
 def initialize_village(request):
     print("=== [INITIALIZE VILLAGE] ===", file=sys.stderr)

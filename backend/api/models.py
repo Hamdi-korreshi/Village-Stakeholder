@@ -33,7 +33,7 @@ class session(models.Model):
     expiry = models.DateTimeField(null=False)
     tokens = models.TextField(null=False)
 
-class notification(models.Model):
+class Notification(models.Model):
     notification_id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_notifications")
     event = models.ForeignKey(calendar_event, on_delete=models.CASCADE, null=True, blank=True, related_name="event_notifications")
@@ -44,12 +44,28 @@ class notification(models.Model):
     status = models.CharField(max_length=20, choices=[
             ("pending", "Pending"),
             ("accepted", "Accepted"),
-            ("blocked", "Blocked")
-        ], null=False)
+            ("blocked", "Blocked"),
+            ("no guardian", "No_guardian")
+        ], default="pending")
+    
+class JoinRequest(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    requester = models.ForeignKey("user", on_delete=models.CASCADE, related_name="join_requests_sent")
+    target = models.ForeignKey("user", on_delete=models.CASCADE, related_name="join_requests_received")
+    village = models.ForeignKey("Village", on_delete=models.CASCADE)
+    support_role = models.CharField(max_length=50)
+    approval_status = models.CharField(max_length=20, choices=[
+        ("Pending", "Pending"),
+        ("approved", "Approved"),
+        ("Blocked", "Blocked"),
+        ("Accepted", "User_accepted"),
+        ("User reject", "User_rejected")
+    ], default="waiting")
+    created_at = models.DateTimeField(auto_now_add=True)
 
-class notification_history(models.Model):
+class NotificationHistory(models.Model):
     history_id = models.BigAutoField(primary_key=True)
-    notification = models.ForeignKey(notification, on_delete=models.CASCADE, related_name="history")
+    notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name="history")
     old_status = models.CharField(max_length=20)
     new_status = models.CharField(max_length=20)
     message = models.TextField(null=False)
@@ -105,6 +121,7 @@ class user_support_relation(models.Model):
         ("religion_advisor", "Religion Advisor"),
         ("close_friend", "Close Friend"),
         ("mentor", "Mentor"),
+        ("guardian", "Guardian")
     ]
     
     user = models.ForeignKey("user", on_delete=models.CASCADE, related_name="user_supporters")
