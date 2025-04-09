@@ -20,4 +20,5 @@ def get_notifs(request):
             "status": notif.status,
             "timestamp": notif.timestamp.isoformat(),
         })
-    return JsonResponse({'notification': notifications_list}, status=200)
+    # make sure that everything from frontend to backend is spelled correctly, had notification without the s and it did not display anything
+    return JsonResponse({'notifications': notifications_list}, status=200)

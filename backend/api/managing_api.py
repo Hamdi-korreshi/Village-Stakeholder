@@ -133,7 +133,7 @@ def add_villager(request):
     print("Created JoinRequest record with ID:", join_request.id, file=sys.stderr)
 
     # todo: add notifcaiton and check for guardian
-    guardian = user_support_relation.object.filter(supporter=villager_username, support_role="Guardian")
+    guardian = user_support_relation.objects.filter(supporter=villager_username, support_role="Guardian")
 
     if not guardian.exists():
         join_request.approval_status = "approved"

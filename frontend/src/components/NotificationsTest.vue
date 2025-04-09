@@ -38,13 +38,16 @@ export default {
   name: 'Notifications',
   setup() {
     const notifications = ref([]);
+
     const fetchNotifications = async () => {
       try {
         const response = await apiClient.get('/get_notifs/');
         // Assuming the backend returns a JSON object with a "notifications" key.
-        notifications.value = response.data.notifications;
+        console.log('Fetched notifications:', response.data.notifications);
+        notifications.value = response.data.notifications || [];
       } catch (error) {
         console.error('Error fetching notifications:', error);
+        notifications.value = [];
       }
     };
 
@@ -68,10 +71,7 @@ export default {
     });
 
     return {
-      notifications,
-      markAllAsRead,
-      dismissNotification,
-      formatTime
+      notifications
     };
   }
 };
