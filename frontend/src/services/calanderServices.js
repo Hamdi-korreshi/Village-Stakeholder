@@ -9,9 +9,7 @@ export const makeCalendarEvent = async () => {
     const response = await apiClient.post("create-calendar-event/");
     return response.data;
   };
-
-
-//TODO: make 
+//TODO: make parameters for 
 export const makeCalendarResposne = async (inviteeResponse) => {
     const response = await apiClient.post("create-calendar-response/",{
         invitee_response: inviteeResponse,

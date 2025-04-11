@@ -29,7 +29,7 @@ def personal_village_members(request):
 def list_user_villages(request):
     current_user = request.user.id
     query = Village.objects.filter(residents=current_user)
-
+    
     response_data = [
         {
             "owner": village.owner.username,

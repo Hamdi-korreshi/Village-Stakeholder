@@ -58,7 +58,7 @@ class VillageTestCase(TestCase):
         self.client.login(username="Alice", password="password1")  # Log in user
 
         # Simulate a GET request to the personal_village_members endpoint
-        response = self.client.get(reverse('personal_village_members'))  # Replace with the actual URL name
+        response = self.client.get(reverse('get-village-members/'))  # Replace with the actual URL name
 
         # Assert the response status code
         self.assertEqual(response.status_code, 200)
