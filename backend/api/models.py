@@ -28,6 +28,38 @@ class CalendarEvent(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class MemberEventAttendee(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    member_event = models.ForeignKey("CalendarEvent", on_delete=models.CASCADE, related_name="event_attendees")
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="attending_events")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('member_event', 'user')
+
+class FeedbackSurvey(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="feedback_surveys")
+    rating = models.IntegerField(null=True, blank=True)  # Optional 1–5 score
+    comments = models.TextField(null=True, blank=True)   # Optional open feedback
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback by {self.user.username} for event {self.event.event_name}"
+
+class StudentInterestForm(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="interest_forms")
+    interests = models.TextField(null=True, blank=True)  # Open-ended or comma-separated input
+    goals = models.TextField(null=True, blank=True)      # What they want to achieve
+    availability = models.CharField(max_length=255, null=True, blank=True)  # e.g., “Weekends”
+    preferred_contact = models.CharField(max_length=100, null=True, blank=True)  # e.g., “Email”
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Interest Form from {self.user.username}"
+
 class Session(models.Model):
     id = models.BigAutoField(primary_key=True)
     user = models.OneToOneField("User", on_delete=models.CASCADE, related_name="user_session")
