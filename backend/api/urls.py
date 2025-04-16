@@ -1,6 +1,6 @@
 from django.urls import path
 
-from api.managing_calendar_api import calendar_invite_create, calendar_invite_response, get_notification
+from api.managing_calendar_api import calendar_invite_create, calendar_invite_response, create_calendar_event, delete_calendar_event, get_calendar_events, get_notification, update_calendar_event
 
 from .managing_api import initialize_village, personal_village_members, list_user_villages, get_village_participants, add_villager, remove_villager
 from .auth_views import get_csrf_token, user_login, user_logout, delete_profile, update_profile, get_profile
@@ -8,7 +8,9 @@ from .registration_view import register_user
 from .views import random_string
 from .pass_reset import ChangePasswordView
 
-urlpatterns = [ path('register/', register_user, name='register_user'),
+urlpatterns = [ 
+    # User interactions
+    path('register/', register_user, name='register_user'),
     path('csrf/', get_csrf_token, name='get_csrf_token'),
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='user_logout'),
@@ -26,7 +28,13 @@ urlpatterns = [ path('register/', register_user, name='register_user'),
     path('add-villager/', add_villager, name='add_villager'),
     path('remove-villager/', remove_villager, name='remove_villager'),
     
-    # Calendar Events management
+    # Calendar Event management
+    path('create-calendar-event/', create_calendar_event, name='create_calendar_event'),
+    path('get-calendar-events/', get_calendar_events, name='get_calendar_events'),
+    path('delete-calendar-event/', delete_calendar_event, name='delete_calendar_event'),
+    path('update-calendar-event/', update_calendar_event, name='update_calendar_event'),
+    
+    # Calendar Invites management
     path('calendar-invite-create/', calendar_invite_create, name='calendar_invite_create'),
     path('calendar-invite-accept/', calendar_invite_response, name='calendar_invite_accept'),
     

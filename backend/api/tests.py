@@ -2,12 +2,12 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.http import JsonResponse;
-from .models import Village  # Import your Village model
+from .models import Village 
 
 class VillageTestCase(TestCase):
     def setUp(self):
         """Set up test data before each test."""
-        self.User = get_user_model()  # Retrieve the custom user model
+        self.User = get_user_model()  
 
         # Create a test user (the owner of the first village)
         self.user = self.User.objects.create_user(

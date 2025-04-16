@@ -31,7 +31,7 @@ PLANNED INTERACTIONS / EXTENSIONS:
 - Optionally paginate or filter the notification list by type (e.g., only show event-related notifications).
 """
 
-from datetime import timezone
+from datetime import datetime, timezone
 import json 
 from api.models import calendar_event, calendar_invite, user, notification
 from django.http import JsonResponse
@@ -68,11 +68,11 @@ def get_calendar_events(request): # gets the events the user is a part of
     query = calendar_event.objects.filter(user=user).order_by("-start_time")
 
     if not query.exists():
-        return JsonResponse({"error": "You have no calendar events"}, status=404)
+        return JsonResponse({"events": []}, status=200)
 
     events = [
         {
-            "event_id": event.event_id,
+            "event_id": event.event_id, # change this to id after and refactor
             "event_name": event.event_name,
             "start_time": event.start_time.isoformat(),
             "end_time": event.end_time.isoformat(),
@@ -87,15 +87,28 @@ def get_calendar_events(request): # gets the events the user is a part of
 
 # ======== Managing Calendar Events ========
 
+def parse_custom_datetime(dt_string): # parses the custom datetime string helper function
+    try:
+        dt = datetime.strptime(dt_string, "%Y-%B-%dT%I:%M%p")
+        return dt
+    except ValueError:
+        return None
+
+
 
 def create_calendar_event(request): # creates a calendar event
     data = json.loads(request.body)
     event_name = data.get("event_name")
-    start_time = data.get("start_time")
-    end_time = data.get("end_time")
+    start_time_str = data.get("start_time")
+    end_time_str = data.get("end_time")
     description = data.get("description")
     reminder = data.get("reminder")
     curr_user = request.user
+    
+    # Parse the custom datetime string
+    start_time = parse_custom_datetime(start_time_str)
+    end_time = parse_custom_datetime(end_time_str)
+    
     if not event_name or not start_time or not end_time:
         return JsonResponse({"error": "Event name, start time, and end time are required"}, status=400)
     if start_time >= end_time:
@@ -111,18 +124,22 @@ def create_calendar_event(request): # creates a calendar event
     )
     return JsonResponse({"message": "Event created"}, status=200)
 
+
+
 def update_calendar_event(request): # updates a calendar event
     data = json.loads(request.body)
-    event_id = data.get("event_id")
+    event_id = data.get("event_id") # change this to id after and refactor
     event_name = data.get("event_name")         
     start_time = data.get("start_time")
     end_time = data.get("end_time")
     description = data.get("description")
     reminder = data.get("reminder")
     curr_user = request.user
+    
+    
     if not event_id:
         return JsonResponse({"error": "Event ID is required"}, status=400)
-    if not event_name and not start_time and not end_time:
+    if not event_name and not start_time and not end_time and not description:
         return JsonResponse({"error": "At least one field to update is required"}, status=400)
     if start_time and end_time and start_time >= end_time:  
         return JsonResponse({"error": "Start time must be before end time"}, status=400)
@@ -130,6 +147,8 @@ def update_calendar_event(request): # updates a calendar event
         event = calendar_event.objects.get(event_id=event_id, user=curr_user)
     except calendar_event.DoesNotExist:
         return JsonResponse({"error": "Event not found"}, status=404)
+    
+    # Update the event fields if provided 
     if event_name:
         event.event_name = event_name
     if start_time:
@@ -143,10 +162,13 @@ def update_calendar_event(request): # updates a calendar event
     event.save()
     return JsonResponse({"message": "Event updated"}, status=200)
 
+
+
 def delete_calendar_event(request): # deletes a calendar event  
     data = json.loads(request.body)
     event_id = data.get("event_id")
     curr_user = request.user
+    
     if not event_id:
         return JsonResponse({"error": "Event ID is required"}, status=400)
     try:
@@ -161,7 +183,7 @@ def delete_calendar_event(request): # deletes a calendar event
 def calendar_invite_create(request): #creates a calendar invite
     try:#
         data = json.loads(request.body)
-        event_id = data.get("event_id")# soon to be changed to id for the event maybe
+        event_id = data.get("event_id")# soon to be changed to id for the event and refactor
         invitees = data.get("invitees", [])
     except (json.JSONDecodeError, AttributeError):
         return JsonResponse({"error": "Invalid request data"}, status=400)
@@ -189,11 +211,11 @@ def calendar_invite_create(request): #creates a calendar invite
             continue  #skip
 
     return JsonResponse({"message": "Invites sent", "invitees": invites_created}, status=200)
-   
+
 def calendar_invite_response(request): # accepts or declines a calendar invite
     try:#
         data = json.loads(request.body)
-        invite_id = data.get("invite_id")
+        invite_id = data.get("invite_id") # change this to id after and refactor when updated
         response = data.get("response")
     except (json.JSONDecodeError, AttributeError):
         return JsonResponse({"error": "Invalid request body"}, status=400)
