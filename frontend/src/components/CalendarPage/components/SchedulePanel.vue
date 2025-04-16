@@ -376,10 +376,21 @@
 import { computed, ref } from "vue";
 
 export interface ScheduleItem {
+  id?: number;
   date: number;
   time: string;
   description: string;
+  month: number;
+  year: number;
 }
+
+
+// Calendarscheduling.vue
+const months = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 
 const props = defineProps<{
   selectedDate: number;
@@ -449,7 +460,7 @@ const newSchedule = ref({
   location: "",
   month: "March",
   date: props.selectedDate,
-  year: 2025,
+  year: 2025, 
 });
 
 const validateTime = () => {
@@ -501,10 +512,13 @@ const handleSubmitSchedule = () => {
   };
 
   emit("new-schedule", {
-    date: scheduleItem.date,
-    time: scheduleItem.time,
-    description: `${scheduleItem.title} - ${scheduleItem.location}`,
-  });
+  date: scheduleItem.date,
+  time: scheduleItem.time,
+  description: `${scheduleItem.title} - ${scheduleItem.location}`,
+  month: scheduleItem.month, 
+  year: scheduleItem.year,  
+});
+
 
   showAddModal.value = false;
 

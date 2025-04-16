@@ -7,21 +7,24 @@
     </div>
 
     <div class="grid grid-cols-7 gap-1 w-full text-black">
+      <!-- CalendarCell.vue -->
       <CalendarCell
-        v-for="day in calendarDays"
-        :key="`${day.date}-${day.isCurrentMonth}`"
+        v-for="(day, index) in calendarDays"
+        :key="`${index}-${day.date}`"
         :day="day"
-        :is-selected="selectedDate === day.date && day.isCurrentMonth"
+        :isSelected="selectedDate === day.date && day.isCurrentMonth"
         @click="() => handleCellClick(day)"
       />
+      
     </div>
   </section>
 </template>
-
 <script setup lang="ts">
-import { computed } from "vue";
-import CalendarCell from "./CalendarCell.vue";
+import CalendarCell from './CalendarCell.vue';
 
+
+import { computed } from "vue";
+// Removed incorrect import
 export interface ScheduleItem {
   date: number;
   time: string;
